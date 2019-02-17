@@ -21,7 +21,7 @@ export function ordersReducer (orderState = Root, action) {
         case TYPES.SET_DELIVERED.text:
             let orderTemp = orderState.orders.filter(x => x.orderId === order.orderId)[0];
 
-            if (action.type === TYPES.SET_DELIVERED) {
+            if (action.type === TYPES.SET_DELIVERED.text) {
                 orderTemp.stateId = TYPES.SET_DELIVERED.id;
                 orderTemp.state = TYPES.SET_DELIVERED.text;
             } else {
