@@ -4,7 +4,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { ordersReducer } from './store/orders/ordes-reducer';
 import { Provider } from 'react-redux';
 import App from './components/app/App';
-import './index.scss';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 import Login from './components/login/Login';
 import Orders from './components/orders/Orders';
