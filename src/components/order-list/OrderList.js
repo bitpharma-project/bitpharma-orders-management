@@ -27,11 +27,6 @@ const styles = theme => ({
 });
 
 class OrderList extends Component{
-
-    constructor(props) {
-        super(props);
-    }
-
     render(){ 
         const { classes, orders, droppableId, showHighlight } = this.props;
 
@@ -42,11 +37,6 @@ class OrderList extends Component{
             toApplyClasses.root = classes.root;
         }
 
-        console.log('Orderlist ---');
-        console.log(this.props);
-        console.log(classes.root);
-        console.log(toApplyClasses.root);
-
         return (
         <Droppable droppableId={droppableId}>
         {(provided) => (
@@ -54,11 +44,7 @@ class OrderList extends Component{
                 ref={provided.innerRef} 
                 {...provided.droppableProps}>
                     <List className={toApplyClasses.root}>
-                        {orders.map((order, index) => {
-                            let userNote = '';
-                            if (!!order.userNote) {
-                                userNote = order.userNote
-                            }
+                        {orders.map((order) => {
                             return (
                                 <OrderItem 
                                     handleOnDragItem={this.props.onDragItem}

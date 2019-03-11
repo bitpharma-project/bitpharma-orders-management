@@ -4,14 +4,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import { Paper } from '@material-ui/core';
 import { Draggable } from 'react-beautiful-dnd'; // Both at the same time
 
 class OrderItem extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         const {id, name, description, userProfileImage, userNote, index, classes} = this.props;
         return(

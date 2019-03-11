@@ -1,30 +1,8 @@
-import React, { Component, propTypes } from 'react';
+import React, { Component } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import { withStyles, Typography, Toolbar, IconButton, Button } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import logo from '../../assets/img/logo_dark_bg.svg';
 import MenuIcon from '@material-ui/icons/Menu';
-
-// const styles = {
-//   root: {
-//     background: 'linear-gradient(45deg, #201E48 30%, #6C539E 90%)',
-//     borderRadius: 3,
-//     border: 0,
-//     color: 'white',
-//     height: 48,
-//     padding: '0 30px',
-//     boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-//     marginBottom: '35px'
-//   },
-//   label: {
-//     textTransform: 'capitalize',
-//   },
-//   logo: {
-//     position: 'relative',
-//     margin: '0 auto',
-//     top: '-10px'
-//   }
-// };
 
 const styles = {
   root: {
@@ -42,10 +20,6 @@ const styles = {
 };
 
 class Navbar extends Component {
-    constructor(props) {
-      super(props);
-    }
-
     render() {
       const { classes } = this.props;
       return(

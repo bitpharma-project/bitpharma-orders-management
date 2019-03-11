@@ -1,12 +1,9 @@
 import React from 'react';
-import NavBar from '../navbar/Navbar';
-import logo from '../../assets/img/logo_dark_bg.svg';
 import { Paper } from '@material-ui/core';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import OrderList from '../order-list/OrderList';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 const styles = theme => ({
     root: {
@@ -45,8 +42,6 @@ class Orders extends React.Component {
     }
 
     handleDragEnd = (event) => {
-        console.log('Order component');
-        console.log(event);
         const { columnsData, showColumnHighLight } = this.state;
 
         let destination = event.destination;
@@ -67,12 +62,6 @@ class Orders extends React.Component {
             //Get source column
             let sourceColumnId = source.droppableId;
             let sourceColumn = columnsData[sourceColumnId-1];
-
-            console.log(destColumnId);
-            console.log(destColumn);
-
-            console.log(sourceColumnId);
-            console.log(sourceColumn);
 
             //Get dragged item
             let item = columnsData[sourceColumnId-1].filter(x => x.id === itemId)[0];
@@ -105,15 +94,13 @@ class Orders extends React.Component {
     }
 
     handleDragStart = (event) => {
-        console.log('STARTING DRAG');
-        console.log(event);
         /** Highlith next column border */
         const { showColumnHighLight } = this.state;
         let columnId = event.source.droppableId;
         showColumnHighLight[columnId] = true; // WARNING: this starts from zero
 
         console.log('columnID: ' + columnId);
-        if(columnId == 3) {
+        if(columnId === 3) {
             showColumnHighLight[columnId] = false;
             showColumnHighLight[columnId-2] = true;
         }
@@ -129,8 +116,6 @@ class Orders extends React.Component {
         let newsId = 1;
         let progressId = 2;
         let deliveredId = 3;
-
-        console.log(showColumnHighLight);
 
         return (
            <DragDropContext onDragEnd={this.handleDragEnd} onDragStart={this.handleDragStart}>
