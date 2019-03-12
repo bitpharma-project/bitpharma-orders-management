@@ -3,7 +3,7 @@ import AppBar from '@material-ui/core/AppBar';
 import { withStyles, Typography, Toolbar, IconButton, Button } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import MenuIcon from '@material-ui/icons/Menu';
-
+import { withRouter } from 'react-router-dom';
 const styles = {
   root: {
     flexGrow: 1,
@@ -20,6 +20,17 @@ const styles = {
 };
 
 class Navbar extends Component {
+
+    constructor(props) {
+      super(props);
+      this.handleLogout = this.handleLogout.bind(this);
+    }
+
+    handleLogout = () => {
+      localStorage.removeItem('access_token');
+      this.props.history.push('/login');
+    }
+
     render() {
       const { classes } = this.props;
       return(
@@ -32,7 +43,7 @@ class Navbar extends Component {
               <Typography variant="h6" color="inherit" className={classes.grow}>
                 Bit orders
               </Typography>
-              <Button color="inherit">Logout</Button>
+              <Button onClick={this.handleLogout} color="inherit">Logout</Button>
             </Toolbar>
           </AppBar>
         </div>
@@ -52,4 +63,4 @@ Navbar.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Navbar);
+export default withStyles(styles)(withRouter(Navbar));

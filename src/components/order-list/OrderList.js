@@ -18,6 +18,7 @@ const styles = theme => ({
     maxWidth: 360,
     height: '100vh',
     border: 'dashed 1px #14A8C3',
+    transition: '0.5s',
     margin: '0 auto',
     backgroundColor: theme.palette.background.paper,
   },

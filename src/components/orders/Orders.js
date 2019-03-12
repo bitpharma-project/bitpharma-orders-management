@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import OrderList from '../order-list/OrderList';
 import { DragDropContext } from 'react-beautiful-dnd';
+import Navbar from '../navbar/Navbar';
 
 const styles = theme => ({
     root: {
@@ -12,10 +13,13 @@ const styles = theme => ({
     paper: {
         padding: theme.spacing.unit * 2,
         textAlign: 'center',
-        color: theme.palette.text.secondary,
+        color: theme.palette.text.primary,
     },
     ordersBox: {
         marginTop: '20px'
+    },
+    titleText: {
+        fontFamily: 'Open Sans, sans-serif'
     }
 });
 
@@ -118,48 +122,51 @@ class Orders extends React.Component {
         let deliveredId = 3;
 
         return (
-           <DragDropContext onDragEnd={this.handleDragEnd} onDragStart={this.handleDragStart}>
-                <div className={classes.root}>
-                    <Grid container>
-                        <Grid item xs={4}>
-                            <Paper className={classes.paper}>
-                                New orders
-                            </Paper>
-                            <div className={classes.ordersBox}>
-                                <OrderList 
-                                    showHighlight={showColumnHighLight[0]}
-                                    droppableId={newsId}
-                                    onDragItem={this.handleDrag}
-                                    orders={columnsData[newsId-1]} />
-                            </div>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Paper className={classes.paper}>
-                                In progress orders
-                            </Paper>
-                            <div className={classes.ordersBox}>
-                                 <OrderList 
-                                    showHighlight={showColumnHighLight[1]}
-                                    droppableId={progressId}
-                                    onDragItem={this.handleDrag}
-                                    orders={columnsData[progressId-1]} />
-                            </div>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Paper className={classes.paper}>
-                                Delivered orders
-                            </Paper>
-                            <div className={classes.ordersBox}>
+            <div>
+                <Navbar />
+                <DragDropContext onDragEnd={this.handleDragEnd} onDragStart={this.handleDragStart}>
+                    <div className={classes.root}>
+                        <Grid container>
+                            <Grid item xs={4}>
+                                <Paper className={classes.paper}>
+                                    <span className={classes.titleText}>New orders</span>
+                                </Paper>
+                                <div className={classes.ordersBox}>
                                     <OrderList 
-                                        showHighlight={showColumnHighLight[2]}
-                                        droppableId={deliveredId}
+                                        showHighlight={showColumnHighLight[0]}
+                                        droppableId={newsId}
                                         onDragItem={this.handleDrag}
-                                        orders={columnsData[deliveredId-1]} />   
-                            </div>
+                                        orders={columnsData[newsId-1]} />
+                                </div>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Paper className={classes.paper}>
+                                <span className={classes.titleText}>In progess orders</span>
+                                </Paper>
+                                <div className={classes.ordersBox}>
+                                    <OrderList 
+                                        showHighlight={showColumnHighLight[1]}
+                                        droppableId={progressId}
+                                        onDragItem={this.handleDrag}
+                                        orders={columnsData[progressId-1]} />
+                                </div>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Paper className={classes.paper}>
+                                    <span className={classes.titleText}>Delivered orders</span>
+                                </Paper>
+                                <div className={classes.ordersBox}>
+                                        <OrderList 
+                                            showHighlight={showColumnHighLight[2]}
+                                            droppableId={deliveredId}
+                                            onDragItem={this.handleDrag}
+                                            orders={columnsData[deliveredId-1]} />   
+                                </div>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </div>
-           </DragDropContext>
+                    </div>
+                </DragDropContext>
+            </div>
         );
     }
 }
