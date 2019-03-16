@@ -1,5 +1,4 @@
 import React from 'react';
-import { Paper } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import OrderList from '../order-list/OrderList';
@@ -15,9 +14,6 @@ const styles = theme => ({
         textAlign: 'center',
         color: theme.palette.text.primary,
     },
-    ordersBox: {
-        marginTop: '20px'
-    },
     titleText: {
         fontFamily: 'Open Sans, sans-serif'
     }
@@ -30,10 +26,36 @@ class Orders extends React.Component {
             showColumnHighLight: [false, false, false],
             columnsData: [
                 [
-                    {id: 1, userNote: 'Please this should be ASAP!', description: 'Two aspirins', name: 'Order name #1', userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'},
-                    {id: 2, description: '1/3 grams of oil', name: 'Order name #2', userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'},
-                    {id: 3, userNote: 'Please let it be winasorb for headched', description: '1/2 winasorb box', name: 'Order name #3', userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'},
-                    {id: 4, description: 'Axpirins 5 boxes', name: 'Order name #4', userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
+                    {
+                        id: 1, 
+                        userNote: 'Please this should be ASAP!', 
+                        description: 'Two aspirins', 
+                        name: 'Order name #1', 
+                        userName: 'Daniel Pena',
+                        items: [{id: 1, name: '2 x Lorem Ipsum'}, {id: 2, name: '2 x Lorem Ipsum'} ],
+                        userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'},
+                    {
+                        id: 2, 
+                        description: '1/3 grams of oil', 
+                        name: 'Order name #2', 
+                        userName: 'Daniel Pena',
+                        items: [{id: 1, name: '2 x Lorem Ipsum'}, {id: 2, name: '2 x Lorem Ipsum'} ],
+                        userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'},
+                    {
+                        id: 3, 
+                        userNote: 'Please let it be winasorb for headched', 
+                        description: '1/2 winasorb box', 
+                        name: 'Order name #3', 
+                        userName: 'Daniel Pena',
+                        items: [{id: 1, name: '2 x Lorem Ipsum'} ],
+                        userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'},
+                    {
+                        id: 4, 
+                        description: 'Axpirins 5 boxes', 
+                        name: 'Order name #4',
+                        userName: 'Daniel Pena',
+                        items: [{id: 1, name: '2 x Lorem Ipsum'} ],
+                        userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
                 ],
                 [
     
@@ -128,40 +150,28 @@ class Orders extends React.Component {
                     <div className={classes.root}>
                         <Grid container>
                             <Grid item xs={4}>
-                                <Paper className={classes.paper}>
-                                    <span className={classes.titleText}>New orders</span>
-                                </Paper>
-                                <div className={classes.ordersBox}>
-                                    <OrderList 
-                                        showHighlight={showColumnHighLight[0]}
-                                        droppableId={newsId}
-                                        onDragItem={this.handleDrag}
-                                        orders={columnsData[newsId-1]} />
-                                </div>
+                                <OrderList 
+                                    title="Incoming"
+                                    showHighlight={showColumnHighLight[0]}
+                                    droppableId={newsId}
+                                    onDragItem={this.handleDrag}
+                                    orders={columnsData[newsId-1]} />
                             </Grid>
                             <Grid item xs={4}>
-                                <Paper className={classes.paper}>
-                                <span className={classes.titleText}>In progess orders</span>
-                                </Paper>
-                                <div className={classes.ordersBox}>
-                                    <OrderList 
-                                        showHighlight={showColumnHighLight[1]}
-                                        droppableId={progressId}
-                                        onDragItem={this.handleDrag}
-                                        orders={columnsData[progressId-1]} />
-                                </div>
+                                <OrderList
+                                    title="In Progress"
+                                    showHighlight={showColumnHighLight[1]}
+                                    droppableId={progressId}
+                                    onDragItem={this.handleDrag}
+                                    orders={columnsData[progressId-1]} />
                             </Grid>
                             <Grid item xs={4}>
-                                <Paper className={classes.paper}>
-                                    <span className={classes.titleText}>Delivered orders</span>
-                                </Paper>
-                                <div className={classes.ordersBox}>
-                                        <OrderList 
-                                            showHighlight={showColumnHighLight[2]}
-                                            droppableId={deliveredId}
-                                            onDragItem={this.handleDrag}
-                                            orders={columnsData[deliveredId-1]} />   
-                                </div>
+                                <OrderList 
+                                    title="Delivered"
+                                    showHighlight={showColumnHighLight[2]}
+                                    droppableId={deliveredId}
+                                    onDragItem={this.handleDrag}
+                                    orders={columnsData[deliveredId-1]} />   
                             </Grid>
                         </Grid>
                     </div>

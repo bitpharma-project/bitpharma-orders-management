@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
+import MoreVert from '@material-ui/icons/MoreVert';
 import { Draggable } from 'react-beautiful-dnd'; // Both at the same time
-
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import IconButton from '@material-ui/core/IconButton';
 class OrderItem extends Component {
     render() {
-        const {id, name, description, userProfileImage, userNote, index, classes} = this.props;
+        const {id, orderedItems, userName, userProfileImage, index} = this.props;
         return(
             <Draggable
                 id={id}
@@ -20,22 +19,33 @@ class OrderItem extends Component {
                        {...provided.draggableProps}
                        {...provided.dragHandleProps}>
 
-                            <ListItem style={{zIndex: '100'}} key={id} alignItems="flex-start">
-                                <ListItemAvatar>
-                                        <Avatar alt="Remy Sharp" src={userProfileImage} />
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary={name}
-                                    secondary={
-                                        <React.Fragment>
-                                            <Typography component="span" className={classes.inline} color="textPrimary">
-                                                {description}
-                                            </Typography>
-                                            {userNote}
-                                        </React.Fragment>
-                                    }
-                                />
-                            </ListItem>
+                            <Card style={{zIndex: '100', width: '100%', margin: '7px'}} key={id} alignItems="flex-start">
+                                <CardContent>
+                                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                                        <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                            <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                                                <img alt={userName} src={userProfileImage} width="35px" height="35px" style={{borderRadius: '50%'}} />
+                                                <div style={{marginLeft: '8px'}}>
+                                                    <span style={{fontWeight: '600'}}>{userName}</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <IconButton>
+                                                    <MoreVert />
+                                                </IconButton>
+                                            </div>
+                                        </div>
+                                        <div style={{marginTop: '8px'}}>
+                                            <span style={{fontWeight: '600', fontSize: '0.9rem'}}>Order</span>
+                                            {orderedItems.map((item, index) => (
+                                                <ListItem key={index}>
+                                                    <span style={{color: 'gray'}}>{item.name}</span>
+                                                </ListItem>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
                        
                        </div>
                    )}
