@@ -125,7 +125,7 @@ class Navbar extends Component {
                 </div>
               </div>
             </Toolbar>
-            <SideMenu innerRef={ref => this.sideMenuRef = ref} />
+            <SideMenu handleLogut={this.handleLogout} innerRef={ref => this.sideMenuRef = ref} />
           </AppBar>
         </div>
       );
