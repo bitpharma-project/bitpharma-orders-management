@@ -10,6 +10,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import { withRouter } from 'react-router';
 import UserInfo from './user-info/UserInfo';
 import SideMenu from '../side-menu/SideMenu';
+import { withCookies } from 'react-cookie';
+import { Redirect } from 'react-router-dom';
 
 const styles = theme => ({
   root: {
@@ -77,20 +79,27 @@ class Navbar extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        setOpen: false
+        setOpen: false,
+        setLoggedOut: false,
       }
-      this.handleLogout = this.handleLogout.bind(this);
       this.sideMenuRef = React.createRef();
     }
 
     handleLogout = () => {
-      localStorage.removeItem('access_token');
-      this.props.history.push('/login');
+      this.props.cookies.remove('token', { path: '/' });
+      this.props.history.push('/');
+      this.props.handleLogout(false);
+    }
+
+    goToProfile = () => {
+      this.props.history.push('/profile');
+    }
+
+    goToOrders = () => {
+      this.props.history.push('/orders');
     }
 
     openSideMenu = () => {
-      console.log('open side menu...');
-      console.log(this.sideMenuRef);
       if (this.sideMenuRef) {
         this.sideMenuRef.handleToggle(true)();
       }
@@ -98,13 +107,19 @@ class Navbar extends Component {
 
     render() {
       const { classes } = this.props;
+      const { setLoggedOut } = this.state;
+
+      if (setLoggedOut) {
+        return <Redirect to='/' />
+      }
+
       return(
         <div className={classes.root}>
           <AppBar className={classes.appBar} position="static">
             <Toolbar>
               <div style={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <div>
-                  <UserInfo openSideMenuHandler={this.openSideMenu} />
+                  <UserInfo user={this.props.user} openSideMenuHandler={this.openSideMenu} />
                 </div>
                 <div>
                   <Typography className={classes.title} variant="h6" color="inherit" noWrap>
@@ -125,7 +140,7 @@ class Navbar extends Component {
                 </div>
               </div>
             </Toolbar>
-            <SideMenu handleLogut={this.handleLogout} innerRef={ref => this.sideMenuRef = ref} />
+            <SideMenu handleOrders={this.goToOrders} handleProfile={this.goToProfile} handleLogut={this.handleLogout} innerRef={ref => this.sideMenuRef = ref} />
           </AppBar>
         </div>
       );
@@ -136,4 +151,4 @@ Navbar.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(withRouter(Navbar));
+export default withStyles(styles)(withRouter(withCookies(Navbar)));

@@ -4,6 +4,11 @@ import Grid from '@material-ui/core/Grid';
 import OrderList from '../order-list/OrderList';
 import { DragDropContext } from 'react-beautiful-dnd';
 import Navbar from '../navbar/Navbar';
+import ActionCable from 'actioncable';
+import { withCookies } from 'react-cookie';
+import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
+import axios from 'axios';
+import { ApiServer, WSConnection } from '../../settings';
 
 const styles = theme => ({
     root: {
@@ -25,46 +30,24 @@ class Orders extends React.Component {
         this.state = {
             showColumnHighLight: [false, false, false],
             columnsData: [
-                [
-                    {
-                        id: 1, 
-                        userNote: 'Please this should be ASAP!', 
-                        description: 'Two aspirins', 
-                        name: 'Order name #1', 
-                        userName: 'Daniel Pena',
-                        items: [{id: 1, name: '2 x Lorem Ipsum'}, {id: 2, name: '2 x Lorem Ipsum'} ],
-                        userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'},
-                    {
-                        id: 2, 
-                        description: '1/3 grams of oil', 
-                        name: 'Order name #2', 
-                        userName: 'Daniel Pena',
-                        items: [{id: 1, name: '2 x Lorem Ipsum'}, {id: 2, name: '2 x Lorem Ipsum'} ],
-                        userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'},
-                    {
-                        id: 3, 
-                        userNote: 'Please let it be winasorb for headched', 
-                        description: '1/2 winasorb box', 
-                        name: 'Order name #3', 
-                        userName: 'Daniel Pena',
-                        items: [{id: 1, name: '2 x Lorem Ipsum'} ],
-                        userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'},
-                    {
-                        id: 4, 
-                        description: 'Axpirins 5 boxes', 
-                        name: 'Order name #4',
-                        userName: 'Daniel Pena',
-                        items: [{id: 1, name: '2 x Lorem Ipsum'} ],
-                        userProfileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
-                ],
-                [
-    
-                ],
-                [
-    
-                ]
-            ]
+              [], [], []
+            ],
+            isLoading: true,
+            user: {
+              firstName: '',
+              lastName: '',
+              imgUrl: '',
+              email: '',
+            }
         };
+        this.axiosInstance = axios.create({
+          baseURL: ApiServer,
+          timeout: 15000,
+          headers: {
+            'Authorization': `Bearer ${this.props.cookies.get('token', { path: '/' })}`,
+            'Content-Type': 'application/json'
+          }
+        });
     }
 
     handleDragEnd = (event) => {
@@ -101,10 +84,21 @@ class Orders extends React.Component {
             columnsData[1] = progressOrders;
             columnsData[2] = deliveredOrders;
 
-            this.setState({
-                columnsData: columnsData
-            });
+            let newState = 'new';
+            if (destColumnId === 2) newState = 'progress';
+            if (destColumnId === 3) newState = 'delivered';
 
+            console.log(destColumnId);
+
+            this.axiosInstance.patch('/order', {
+              order_id: itemId,
+              state: newState
+            }).then(data => {
+              this.setState({
+                columnsData: columnsData
+              });
+            })
+          
         } else {
             console.log('Source and destination cannot be null.');
         }
@@ -125,7 +119,6 @@ class Orders extends React.Component {
         let columnId = event.source.droppableId;
         showColumnHighLight[columnId] = true; // WARNING: this starts from zero
 
-        console.log('columnID: ' + columnId);
         if(columnId === 3) {
             showColumnHighLight[columnId] = false;
             showColumnHighLight[columnId-2] = true;
@@ -136,26 +129,83 @@ class Orders extends React.Component {
         });
     }
 
+    componentDidMount = () => {
+      //Show action cable
+      console.log('------- Action cable');
+      console.log(this.props.cable);
+      this.axiosInstance.get('/user').then(data => {
+        this.setState({
+          user: {
+            firstName: data.data.first_name,
+            lastName: data.data.last_name,
+            email: data.data.email,
+            imgUrl: data.data.profile_picture_url,
+          }
+        });
+      });
+      this.getColumnsData();
+    }
+
+    async getColumnsData() {
+      const { columnsData } = this.state;
+      let news = await this.axiosInstance.get(`/order/all?status=new`);
+      let progress = await this.axiosInstance.get(`/order/all?status=progress`);
+      let delivered = await this.axiosInstance.get(`/order/all?status=delivered`);
+
+      columnsData[0] = news.data;
+      columnsData[1] = progress.data;
+      columnsData[2] = delivered.data;
+
+      this.setState({
+        columnsData: columnsData
+      });
+    }
+
+    handleReceived = (message) => {
+        const response = message;
+        const { columnsData } = this.state;
+        columnsData[0] = response.orders_new;
+        columnsData[1] = response.orders_progress;
+        columnsData[2] = response.orders_delivery;
+         console.log(message)
+        this.setState({
+          columnsData: columnsData
+        });
+    }
+
+    handleLogout = (e) => {
+      this.props.handleLoginLogout(e);
+    }
+
     render() {
-        const { classes } = this.props;
-        const { columnsData, showColumnHighLight } = this.state;
+        const { classes, cookies } = this.props;
+        const { columnsData, showColumnHighLight, user } = this.state;
         let newsId = 1;
         let progressId = 2;
         let deliveredId = 3;
+        this.cable = ActionCable.createConsumer(`${WSConnection}/cable`)
 
         return (
             <div>
-                <Navbar />
+                <Navbar handleLogout={this.handleLogout} user={user} cookies={cookies} />
                 <DragDropContext onDragEnd={this.handleDragEnd} onDragStart={this.handleDragStart}>
                     <div className={classes.root}>
                         <Grid container>
                             <Grid item xs={4}>
+
+        <ActionCableProvider cable={this.cable}>
+          <ActionCableConsumer
+            channel="OrderNotificationChannel"
+            onReceived={this.handleReceived}
+          />
                                 <OrderList 
                                     title="Incoming"
                                     showHighlight={showColumnHighLight[0]}
                                     droppableId={newsId}
                                     onDragItem={this.handleDrag}
                                     orders={columnsData[newsId-1]} />
+
+            </ActionCableProvider>
                             </Grid>
                             <Grid item xs={4}>
                                 <OrderList
@@ -181,4 +231,4 @@ class Orders extends React.Component {
     }
 }
 
-export default withStyles(styles)(Orders);
+export default withStyles(styles)(withCookies(Orders));

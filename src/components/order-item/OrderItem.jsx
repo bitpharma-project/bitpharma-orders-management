@@ -7,7 +7,8 @@ import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
 class OrderItem extends Component {
     render() {
-        const {id, orderedItems, userName, userProfileImage, index} = this.props;
+        const {id, orderedItems, user, index} = this.props;
+        const useImgUrl = 'https://britz.mcmaster.ca/images/nouserimage.gif/image';
         return(
             <Draggable
                 id={id}
@@ -24,9 +25,9 @@ class OrderItem extends Component {
                                     <div style={{display: 'flex', flexDirection: 'column'}}>
                                         <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                                                <img alt={userName} src={userProfileImage} width="35px" height="35px" style={{borderRadius: '50%'}} />
+                                                <img alt="" src={user.profile_picture_url? `${'http://192.168.43.72:3002/'}/${user.profile_picture_url}` : useImgUrl} width="35px" height="35px" style={{borderRadius: '50%'}} />
                                                 <div style={{marginLeft: '8px'}}>
-                                                    <span style={{fontWeight: '600'}}>{userName}</span>
+                                                    <span style={{fontWeight: '600'}}>{user.first_name} {user.last_name}</span>
                                                 </div>
                                             </div>
                                             <div>
@@ -36,10 +37,13 @@ class OrderItem extends Component {
                                             </div>
                                         </div>
                                         <div style={{marginTop: '8px'}}>
-                                            <span style={{fontWeight: '600', fontSize: '0.9rem'}}>Order</span>
+                                            <div>
+                                             <span style={{fontWeight: '600', fontSize: '0.9rem'}}>Order</span>
+                                            </div>
                                             {orderedItems.map((item, index) => (
-                                                <ListItem key={index}>
-                                                    <span style={{color: 'gray'}}>{item.name}</span>
+                                                <ListItem key={index} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <div><span style={{color: 'gray'}}>{item.name}</span></div>
+                                                    <div>{ item.price}</div>
                                                 </ListItem>
                                             ))}
                                         </div>

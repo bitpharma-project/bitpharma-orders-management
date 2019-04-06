@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import { ApiServer } from '../../../settings';
 
 const UserInfoWrapper = styled.div`
     display: flex;
@@ -27,20 +28,20 @@ class UserInfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userName: 'Mia Sketch',
             userRole: 'Product Manager',
-            userImageUrl: 'https://pbs.twimg.com/profile_images/3687297504/cee48cd2318bbdf4263f96c760eba67c_400x400.jpeg'
+            userImageUrl: 'https://britz.mcmaster.ca/images/nouserimage.gif/image'
         }
     }
 
     render() {
-        const { userImageUrl, userName, userRole } = this.state;
-        const { classes } = this.props;
+        const { userImageUrl, userRole } = this.state;
+        const { classes, user } = this.props;
+        console.log(user);
         return (
             <UserInfoWrapper>
-                <img alt={userName} src={userImageUrl} style={{borderRadius: '50%'}} width="50px" height="50px" />
+                <img alt={user.firstName} src={user.imgUrl? `${ApiServer}/${user.imgUrl}` : userImageUrl} style={{borderRadius: '50%'}} width="50px" height="50px" />
                 <InfoWrapper>
-                    <div><span style={{fontSize: '600'}}>{userName}</span></div>
+                    <div><span style={{fontSize: '600'}}>{user.firstName} {user.lastName}</span></div>
                     <div><span>{userRole}</span></div>
                 </InfoWrapper>
                 <IconButton onClick={this.props.openSideMenuHandler}>

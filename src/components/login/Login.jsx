@@ -14,6 +14,9 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import axios from 'axios';
 import { withRouter, Redirect } from 'react-router-dom';
 import logo from '../../assets/img/logo_dark_bg.svg'
+import { ApiServer } from '../../settings';
+import { withCookies } from 'react-cookie';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
   main: {
@@ -85,26 +88,37 @@ class SignIn extends Component {
   handleOnSubmit = (e) => {
     e.preventDefault();
     const { email, password } = this.state;
+    const { cookies } = this.props;
     this.setState({
       isLoading: true
     });
-    axios.post('https://reqres.in/api/login', {email: email, password: password})
+    axios.post(`${ApiServer}/login`, {user: {email: email, password: password} })
     .then(data => {
-      if (email !== 'admin@bitpharma.com') {
-        this.loadError()
+      if (!!data) {
+        const tokenReceived = this.getToken(data.headers['authorization']);
+        cookies.set('token', tokenReceived, { path: '/' });
+        this.setState({
+          isLoading: false,
+          hasErrors: false,
+          errors: [],
+          isLoggedIn: true
+        }, () => {
+          this.props.handleLogin(true);
+        });
       }
-      else {
-        if (!!data) {
-          localStorage.setItem('access_token', data.data.token);
-          this.setState({
-            isLoading: false,
-            hasErrors: false,
-            errors: [],
-            isLoggedIn: true
-          });
-        }
-      }
+    }).catch( (err) => {
+      this.setState({
+        isLoading: false,
+        hasErrors: true,
+      });
     });
+  }
+
+  getToken = (value) => {
+    if(value.includes('Bearer')) {
+      value = value.split(' ')[1]
+    }
+    return value;
   }
 
   loadError = () => {
@@ -116,7 +130,7 @@ class SignIn extends Component {
 
   render() {
     const { classes } = this.props;
-    const { email, password, rememberMe, hasErrors, errors, isLoggedIn } = this.state;
+    const { email, password, rememberMe, hasErrors, errors, isLoggedIn, isLoading } = this.state;
 
     let ErrorComponent = <div>
       <Typography component="h6" variant="body1">
@@ -163,7 +177,7 @@ class SignIn extends Component {
               className={classes.submit}
               onClick={this.handleOnSubmit}
             >
-              Sign in
+              Login { isLoading ? <CircularProgress style={{ marginLeft: '7px' }} size={20} color="#fff" /> : null }
             </Button>
           </form>
         </Paper>
@@ -176,4 +190,4 @@ SignIn.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(withRouter(SignIn));
+export default withStyles(styles)(withRouter(withCookies(SignIn)));

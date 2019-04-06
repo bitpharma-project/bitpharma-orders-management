@@ -7,6 +7,7 @@
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
     "@svgr/webpack": "4.1.0",
+    "actioncable": "^5.2.2-1",
     "axios": "^0.18.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.0.0",
@@ -46,8 +47,10 @@
     "postcss-safe-parser": "4.0.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.2",
+    "react-actioncable-provider": "^2.0.0",
     "react-app-polyfill": "^0.2.1",
     "react-beautiful-dnd": "^10.0.4",
+    "react-cookie": "^3.1.1",
     "react-dev-utils": "^7.0.3",
     "react-dom": "^16.8.2",
     "react-redux": "^6.0.0",
@@ -67,7 +70,7 @@
     "workbox-webpack-plugin": "3.6.3"
   },
   "scripts": {
-    "start": "nodemon scripts/start.js",
+    "start": "PORT=5000 nodemon scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "flow": "flow"

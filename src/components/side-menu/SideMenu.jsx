@@ -6,6 +6,7 @@ import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import { runInThisContext } from 'vm';
 
 const styles = {
   list: {
@@ -17,14 +18,14 @@ const styles = {
 };
 
 class SideMenu extends React.Component {
-    state = {
-        open: false
-    };
+  state = {
+      open: false
+  };
   
-    handleToggle = (open) => () => { 
+  handleToggle = (open) => () => { 
 
-        this.setState({open: open})
-    };
+      this.setState({open: open})
+  };
 
   render() {
     const { classes } = this.props;
@@ -32,11 +33,17 @@ class SideMenu extends React.Component {
 
     const sideList = (
       <div className={classes.list}>
+       <ListItem button onClick={this.props.handleProfile}>
+          <ListItemText primary="Profile" />
+        </ListItem>
+        <ListItem button onClick={this.props.handleOrders}>
+          <ListItemText primary="Orders" />
+        </ListItem>
         <Divider />
         <List>
-            <ListItem button onClick={this.props.handleLogut}>
-              <ListItemText primary="Logout" />
-            </ListItem>
+          <ListItem button onClick={this.props.handleLogut}>
+            <ListItemText primary="Logout" />
+          </ListItem>
         </List>
       </div>
     );

@@ -56,12 +56,8 @@ class OrderList extends Component{
                             handleOnDragItem={this.props.onDragItem}
                             key={order.id} 
                             id={order.id}
-                            name={order.name} 
-                            userName={order.userName}
-                            orderedItems={order.items}
-                            description={order.description}
-                            userNote={(!!order.userNote)? order.userNote : ''}
-                            userProfileImage={order.userProfileImage}
+                            user={order.user}
+                            orderedItems={order.products}
                             classes={classes}
                             index={order.id} />
                         );
