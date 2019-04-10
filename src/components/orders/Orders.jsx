@@ -8,7 +8,7 @@ import ActionCable from 'actioncable';
 import { withCookies } from 'react-cookie';
 import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
 import axios from 'axios';
-import { ApiServer, WSConnection } from '../../settings';
+import { ApiServer, WSConnection, Server } from '../../settings';
 import { NOTIFICATION_TYPES } from '../../constants/NotificationTypes';
 const styles = theme => ({
     root: {
@@ -47,6 +47,8 @@ class Orders extends React.Component {
             'Content-Type': 'application/json'
           }
         });
+
+        this.cable = null;
     }
 
     handleDragEnd = (event) => {
@@ -87,7 +89,10 @@ class Orders extends React.Component {
             if (destColumnId === 2) newState = 'progress';
             if (destColumnId === 3) newState = 'delivered';
 
+            
+            console.log('BEFORE UPDATE ON SERVER');
             console.log(destColumnId);
+            console.log(columnsData);
 
             this.axiosInstance.patch('/order', {
               order_id: itemId,
@@ -142,10 +147,13 @@ class Orders extends React.Component {
         });
     }
 
+    componentWillMount = () => {
+      console.log("#################");
+      this.cable = ActionCable.createConsumer(`${WSConnection}/cable`);
+    }
+
     componentDidMount = () => {
-      //Show action cable
-      console.log('------- Action cable');
-      console.log(this.props.cable);
+      
       this.axiosInstance.get('/user').then(data => {
         this.setState({
           user: {
@@ -176,13 +184,16 @@ class Orders extends React.Component {
     handleReceived = (message) => {
         const response = message;
         const { columnsData } = this.state;
-        columnsData[0] = response.orders_new;
-        columnsData[1] = response.orders_progress;
-        columnsData[2] = response.orders_delivery;
-         console.log(message)
-        this.setState({
-          columnsData: columnsData
-        });
+        if (!!response && !!response.orders_new && !!response.orders_progress && !!response.orders_delivery) {
+          columnsData[0] = response.orders_new;
+          columnsData[1] = response.orders_progress;
+          columnsData[2] = response.orders_delivery;
+          console.log('Receive order!!');
+          console.log(message);
+          this.setState({
+            columnsData: columnsData
+          });
+        }
     }
 
     handleLogout = (e) => {
@@ -195,21 +206,24 @@ class Orders extends React.Component {
         let newsId = 1;
         let progressId = 2;
         let deliveredId = 3;
-        this.cable = ActionCable.createConsumer(`${WSConnection}/cable`)
+        
+        console.log('COLUMNS DATA: :::: ::');
+        console.log(columnsData);
+
 
         return (
             <div>
+              <ActionCableProvider cable={this.cable}>
+                <ActionCableConsumer
+                  channel="OrderNotificationChannel"
+                  onReceived={this.handleReceived}
+                />
                 <Navbar handleLogout={this.handleLogout} user={user} cookies={cookies} />
                 <DragDropContext onDragEnd={this.handleDragEnd} onDragStart={this.handleDragStart}>
                     <div className={classes.root}>
                         <Grid container>
                             <Grid item xs={4}>
-
-        <ActionCableProvider cable={this.cable}>
-          <ActionCableConsumer
-            channel="OrderNotificationChannel"
-            onReceived={this.handleReceived}
-          />
+                            
                                 <OrderList 
                                     title="Incoming"
                                     showHighlight={showColumnHighLight[0]}
@@ -217,7 +231,6 @@ class Orders extends React.Component {
                                     onDragItem={this.handleDrag}
                                     orders={columnsData[newsId-1]} />
 
-            </ActionCableProvider>
                             </Grid>
                             <Grid item xs={4}>
                                 <OrderList
@@ -238,6 +251,7 @@ class Orders extends React.Component {
                         </Grid>
                     </div>
                 </DragDropContext>
+                </ActionCableProvider>
             </div>
         );
     }

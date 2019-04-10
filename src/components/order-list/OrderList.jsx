@@ -42,7 +42,7 @@ class OrderList extends Component{
             <TitleOrderList
               title={this.props.title}
               classes={classes}
-              totalItems={orders.length}
+              totalItems={ (!!orders)? orders.length : 0}
             />
             <Droppable droppableId={droppableId}>
             {(provided) => (
@@ -50,7 +50,8 @@ class OrderList extends Component{
               ref={provided.innerRef} 
               {...provided.droppableProps}>
               <List className={toApplyClasses.root}>
-                {orders.map((order) => {
+                {(!!orders) ?
+                  orders.map((order) => {
                     return (
                         <OrderItem 
                             handleOnDragItem={this.props.onDragItem}
@@ -61,7 +62,7 @@ class OrderList extends Component{
                             classes={classes}
                             index={order.id} />
                         );
-                    })}
+                    }) : null}
               </List>
               {provided.placeholder}
               </div>

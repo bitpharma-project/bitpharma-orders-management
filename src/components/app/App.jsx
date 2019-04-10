@@ -3,8 +3,6 @@ import { withRouter, Switch } from 'react-router-dom'
 import { withCookies } from 'react-cookie';
 import { CookiesProvider } from 'react-cookie';
 import axios from 'axios';
-import ActionCable from 'actioncable';
-import { WSConnection } from '../../settings';
 import { Route, BrowserRouter as Router, Redirect } from 'react-router-dom';
 import Login from '../login/Login';
 import Orders from '../orders/Orders';
@@ -12,7 +10,8 @@ import Profile from '../profile/Profile';
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { NOTIFICATION_TYPES } from "../../constants/NotificationTypes";
-
+import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
+import { Server } from '../../settings';
 
 class App extends Component {
 
@@ -22,8 +21,6 @@ class App extends Component {
       access_token: undefined,
       isLoggedIn: false
     }
-
-    this.cable = ActionCable.createConsumer(WSConnection);
 
     this.notificationDOMRef_info = React.createRef();
     this.notificationDOMRef_sucess = React.createRef();
@@ -98,8 +95,8 @@ class App extends Component {
               <ReactNotification ref={this.notificationDOMRef_sucess} />
               <Switch>
                 <Route exact path='/' render={() => (isLoggedIn)? <Redirect to='/orders' /> : <Login handleLogin={this.handleLoginLogout} />} />
-                <Route exact path='/orders' component={() => (!isLoggedIn)? <Redirect to='/' /> : <Orders addNotification={this.addNotification} handleLoginLogout={this.handleLoginLogout} cookies={cookies}  />} />
-                <Route exact path='/profile' component={() => (!isLoggedIn)? <Redirect to='/' /> : <Profile addNotification={this.addNotification} handleLoginLogout={this.handleLoginLogout} cookies={cookies} />} />
+                <Route exact path='/orders' render={() => (!isLoggedIn)? <Redirect to='/' /> : <Orders addNotification={this.addNotification} handleLoginLogout={this.handleLoginLogout} cookies={cookies}  />} />
+                <Route exact path='/profile' render={() => (!isLoggedIn)? <Redirect to='/' /> : <Profile addNotification={this.addNotification} handleLoginLogout={this.handleLoginLogout} cookies={cookies} />} />
               </Switch>
             </div>
           </Router>
