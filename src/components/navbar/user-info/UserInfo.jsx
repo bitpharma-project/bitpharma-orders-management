@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import { ApiServer } from '../../../settings';
+import { ApiServer, Server } from '../../../settings';
 
 const UserInfoWrapper = styled.div`
     display: flex;
@@ -39,9 +39,9 @@ class UserInfo extends React.Component {
         console.log(user);
         return (
             <UserInfoWrapper>
-                <img alt={user.firstName} src={user.imgUrl? `${ApiServer}/${user.imgUrl}` : userImageUrl} style={{borderRadius: '50%'}} width="50px" height="50px" />
+                <img alt={user.firstName} src={user.imgUrl? `${Server}/${user.imgUrl}` : userImageUrl} style={{borderRadius: '50%'}} width="50px" height="50px" />
                 <InfoWrapper>
-                    <div><span style={{fontSize: '600'}}>{user.firstName} {user.lastName}</span></div>
+                    <div><span style={{fontSize: '600'}}>{user.complete_name}</span></div>
                     <div><span>{userRole}</span></div>
                 </InfoWrapper>
                 <IconButton onClick={this.props.openSideMenuHandler}>

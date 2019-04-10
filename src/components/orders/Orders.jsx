@@ -9,7 +9,7 @@ import { withCookies } from 'react-cookie';
 import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
 import axios from 'axios';
 import { ApiServer, WSConnection } from '../../settings';
-
+import { NOTIFICATION_TYPES } from '../../constants/NotificationTypes';
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -34,8 +34,7 @@ class Orders extends React.Component {
             ],
             isLoading: true,
             user: {
-              firstName: '',
-              lastName: '',
+              complete_name: '',
               imgUrl: '',
               email: '',
             }
@@ -96,6 +95,20 @@ class Orders extends React.Component {
             }).then(data => {
               this.setState({
                 columnsData: columnsData
+              }, () => {
+                this.props.addNotification(
+                  "Success",
+                  "Order was updated successfully!",
+                  2000,
+                  NOTIFICATION_TYPES.SUCCESS
+                );
+              }, err => {
+                this.props.addNotification(
+                  ":( Oh no!",
+                  "If the problem persists, please contact your administrator.",
+                  2000,
+                  NOTIFICATION_TYPES.ERROR
+                );
               });
             })
           
@@ -136,8 +149,7 @@ class Orders extends React.Component {
       this.axiosInstance.get('/user').then(data => {
         this.setState({
           user: {
-            firstName: data.data.first_name,
-            lastName: data.data.last_name,
+            complete_name: data.data.complete_name,
             email: data.data.email,
             imgUrl: data.data.profile_picture_url,
           }

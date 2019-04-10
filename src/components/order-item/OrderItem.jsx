@@ -5,6 +5,7 @@ import { Draggable } from 'react-beautiful-dnd'; // Both at the same time
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
+import { Server } from '../../settings';
 class OrderItem extends Component {
     render() {
         const {id, orderedItems, user, index} = this.props;
@@ -25,7 +26,7 @@ class OrderItem extends Component {
                                     <div style={{display: 'flex', flexDirection: 'column'}}>
                                         <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                                                <img alt="" src={user.profile_picture_url? `${'http://192.168.43.72:3002/'}/${user.profile_picture_url}` : useImgUrl} width="35px" height="35px" style={{borderRadius: '50%'}} />
+                                                <img alt="" src={user.profile_picture_url? `${Server}/${user.profile_picture_url}` : useImgUrl} width="35px" height="35px" style={{borderRadius: '50%'}} />
                                                 <div style={{marginLeft: '8px'}}>
                                                     <span style={{fontWeight: '600'}}>{user.first_name} {user.last_name}</span>
                                                 </div>
