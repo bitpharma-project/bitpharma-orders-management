@@ -7,9 +7,17 @@ import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
 import { Server } from '../../settings';
 class OrderItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      total: 0
+    }
+  }
     render() {
         const {id, orderedItems, user, index} = this.props;
+        let total = 0;
         const useImgUrl = 'https://britz.mcmaster.ca/images/nouserimage.gif/image';
+        
         return(
             <Draggable
                 id={id}
@@ -41,17 +49,25 @@ class OrderItem extends Component {
                                             <div>
                                              <span style={{fontWeight: '600', fontSize: '0.9rem'}}>Order</span>
                                             </div>
-                                            {orderedItems.map((item, index) => (
-                                                <ListItem key={index} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <div><span style={{color: 'gray'}}>{item.name}</span></div>
+                                            {orderedItems.map((item, index) => {
+
+                                                total += Number(item.price);
+
+                                                return (
+                                                  <ListItem key={index} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                                    <div><span>{item.qty} x </span><span style={{color: 'gray'}}>{item.name}</span></div>
                                                     <div>{ item.price}</div>
-                                                </ListItem>
-                                            ))}
+                                                  </ListItem>
+                                                );
+                                            })}
+                                        </div>
+                                        <div style={{ backgroundColor: 'lightgray', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                          <div><span style={{ fontStyle: 'italic', color: 'darkgray' }}>TOTAL:</span></div>
+                                          <div>{ total }</div>
                                         </div>
                                     </div>
                                 </CardContent>
                             </Card>
-                       
                        </div>
                    )}
             </Draggable>
