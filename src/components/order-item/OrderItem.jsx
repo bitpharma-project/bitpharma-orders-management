@@ -14,8 +14,8 @@ class OrderItem extends Component {
     }
   }
     render() {
-        const {id, orderedItems, user, index} = this.props;
-        let total = 0;
+        const {id, orderedItems, user, index, orderTotal} = this.props;
+        //let total = 0;
         const useImgUrl = 'https://britz.mcmaster.ca/images/nouserimage.gif/image';
         
         return(
@@ -51,7 +51,7 @@ class OrderItem extends Component {
                                             </div>
                                             {orderedItems.map((item, index) => {
 
-                                                total += Number(item.price);
+                                                //total += Number(item.price);
 
                                                 return (
                                                   <ListItem key={index} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -63,7 +63,7 @@ class OrderItem extends Component {
                                         </div>
                                         <div style={{ backgroundColor: 'lightgray', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                           <div><span style={{ fontStyle: 'italic', color: 'darkgray' }}>TOTAL:</span></div>
-                                          <div>{ total }</div>
+                                          <div>{ orderTotal }</div>
                                         </div>
                                     </div>
                                 </CardContent>

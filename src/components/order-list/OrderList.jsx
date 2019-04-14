@@ -60,6 +60,7 @@ class OrderList extends Component{
                             user={order.user}
                             orderedItems={order.products}
                             classes={classes}
+                            orderTotal={order.order_total}
                             index={order.id} />
                         );
                     }) : null}

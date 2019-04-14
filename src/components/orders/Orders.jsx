@@ -172,22 +172,38 @@ class Orders extends React.Component {
       let progress = await this.axiosInstance.get(`/order/all?status=progress`);
       let delivered = await this.axiosInstance.get(`/order/all?status=delivered`);
 
-      columnsData[0] = news.data;
-      columnsData[1] = progress.data;
-      columnsData[2] = delivered.data;
+      columnsData[0] = this.orderWithTotals(news.data);
+      columnsData[1] = this.orderWithTotals(progress.data);
+      columnsData[2] = this.orderWithTotals(delivered.data);
 
       this.setState({
         columnsData: columnsData
       });
     }
 
+    orderWithTotals = (orders) => {
+      let result = orders.map((order) => {
+        let total = 0;
+        for(let i = 0; i < order.products.length; i++) {
+          total += Number(order.products[i].price)
+        }
+        return {
+          ...order,
+          order_total: total
+        }
+      });
+
+      return result;
+    }
+
     handleReceived = (message) => {
         const response = message;
         const { columnsData } = this.state;
         if (!!response && !!response.orders_new && !!response.orders_progress && !!response.orders_delivery) {
-          columnsData[0] = response.orders_new;
-          columnsData[1] = response.orders_progress;
-          columnsData[2] = response.orders_delivery;
+          columnsData[0] = this.orderWithTotals(response.orders_new);
+          columnsData[1] = this.orderWithTotals(response.orders_progress);
+          columnsData[2] = this.orderWithTotals(response.orders_delivery);
+
           console.log('Receive order!!');
           console.log(message);
           this.setState({
