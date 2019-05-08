@@ -11,7 +11,6 @@ import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { NOTIFICATION_TYPES } from "../../constants/NotificationTypes";
 import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
-import { Server } from '../../settings';
 
 class App extends Component {
 
