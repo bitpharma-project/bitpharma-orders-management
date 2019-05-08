@@ -5,6 +5,7 @@ services:
   - docker
 before_script:
   - npm install
+  - npm install -g node-sass
 script:
   - npm run build
 deploy:
