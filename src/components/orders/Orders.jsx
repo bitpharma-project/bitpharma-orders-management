@@ -10,7 +10,6 @@ import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-prov
 import axios from 'axios';
 import { ApiServer, WSConnection, Server } from '../../settings';
 import { NOTIFICATION_TYPES } from '../../constants/NotificationTypes';
-
 const styles = theme => ({
     root: {
         flexGrow: 1,
