@@ -1,4 +1,5 @@
 import React from 'react';
+import "babel-polyfill";
 import { shallow } from 'enzyme';
 import App from '../components/app/App';
 
