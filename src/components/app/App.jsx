@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter, Switch } from 'react-router-dom'
-import { withCookies } from 'react-cookie';
-import { CookiesProvider } from 'react-cookie';
+import { withCookies, CookiesProvider } from 'react-cookie';
 import axios from 'axios';
 import { Route, BrowserRouter as Router, Redirect } from 'react-router-dom';
 import Login from '../login/Login';
