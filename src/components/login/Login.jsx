@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import axios from 'axios';
 import { withRouter, Redirect } from 'react-router-dom';
-import logo from '/img/logo_dark_bg.svg'
+import logo from '../../assets/img/logo_dark_bg.svg';
 import { ApiServer } from '../../settings';
 import { withCookies } from 'react-cookie';
 import CircularProgress from '@material-ui/core/CircularProgress';
