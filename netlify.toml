@@ -2,3 +2,8 @@
 base = "bitpharma-orders-management/"
 publish = "bitpharma-orders-management/build/"
 command = "yarn build"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
