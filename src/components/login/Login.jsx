@@ -17,6 +17,7 @@ import logo from '../../assets/img/logo_dark_bg.svg';
 import { ApiServer } from '../../settings';
 import { withCookies } from 'react-cookie';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { https } from 'https';
 
 const styles = theme => ({
   main: {
@@ -89,10 +90,13 @@ class SignIn extends Component {
     e.preventDefault();
     const { email, password } = this.state;
     const { cookies } = this.props;
+    const agent = new https.Agent({  
+      rejectUnauthorized: false
+    });
     this.setState({
       isLoading: true
     });
-    axios.post(`${ApiServer}/login`, {user: {email: email, password: password} })
+    axios.post(`${ApiServer}/login`, {user: {email: email, password: password} }, { httpsAgent: agent })
     .then(data => {
       if (!!data) {
         const tokenReceived = this.getToken(data.headers['authorization']);
