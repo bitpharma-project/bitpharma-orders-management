@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import NavBar from '../navbar/Navbar';
-import axios from 'axios';
-import { ApiServer, Server } from '../../settings';
+import { Server } from '../../settings';
 import { withCookies } from 'react-cookie';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import { NOTIFICATION_TYPES } from '../../constants/NotificationTypes';
+import withAPI from '../../utils/withAPI';
 
 const styles = theme => ({
   container: {
@@ -39,17 +37,11 @@ class Profile extends Component {
     this.state = {
       user: null
     }
-    this.axiosInstance = axios.create({
-      baseURL: ApiServer,
-      timeout: 15000,
-      headers: {
-        'Authorization': `Bearer ${this.props.cookies.get('token', { path: '/' })}`,
-      }
-    });
+    this.API = this.props.API;
   }
 
   componentWillMount = () => {
-    this.axiosInstance.get('/user').then(data => {
+    this.API.get('/user').then(data => {
       this.setState({
         user: {
           complete_name: data.data.complete_name,
@@ -77,9 +69,7 @@ class Profile extends Component {
       complete_name: user.complete_name,
       profile_picture_url: imgeSelected
     }
-    this.axiosInstance.patch('/user', modifyUser).then(data => {
-      console.log('Saved succefully!!');
-      console.log(data);
+    this.API.patch('/user', modifyUser).then(data => {
       this.props.addNotification(
         "Success",
         "User info was saved successfully!",
@@ -99,17 +89,12 @@ class Profile extends Component {
       let imageData = new FormData();
       imageData.append("image", imgeSelected);
 
-      console.log('will call save pfogile ??????');
-      console.log(imageData);
-      console.log(imgeSelected);
-      this.axiosInstance.post('/user/profile_picture', imageData, {
+      this.API.post('/user/profile_picture', imageData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Content-Disposition': 'form-data'
         }
       }).then(data => {
-        console.log('Photo saved!!');
-        console.log(data);
         let response = data.data;
         user.imgUrl = response.profile_picture_url;
         this.setState({
@@ -128,7 +113,6 @@ class Profile extends Component {
   }
 
   handleImage = (e) => {
-    console.log(e.target.files[0]);
     this.setState({
       imgeSelected: e.target.files[0]
     });
@@ -202,4 +186,4 @@ class Profile extends Component {
   }
 }
 
-export default withStyles(styles)(withCookies(Profile));
+export default withStyles(styles)(withCookies(withAPI(Profile)));

@@ -10,7 +10,8 @@ import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { NOTIFICATION_TYPES } from "../../constants/NotificationTypes";
 import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
-import { https } from 'https';
+import { APIContext } from '../../utils/API';
+import { ApiServer } from '../../settings';
 class App extends Component {
 
   constructor(props) {
@@ -23,6 +24,16 @@ class App extends Component {
     this.notificationDOMRef_info = React.createRef();
     this.notificationDOMRef_sucess = React.createRef();
     this.notificationDOMRef_error = React.createRef();
+
+    this.API = axios.create({
+      baseURL: ApiServer,
+      responseType: "json"
+    });
+    
+    this.API.interceptors.request.use((config) => {
+      config.headers = { Authorization: `Bearer ${this.props.cookies.get('token', { path: '/' })}` };
+      return config;
+    }, error => Promise.reject(error));
   }
 
   addNotification = (title, message, duration, type) => {
@@ -48,35 +59,23 @@ class App extends Component {
   componentWillMount() {
     // Get user access token
     const accessToken = this.props.cookies.get('token', { path: '/' });
-    console.log(accessToken);
     if (!!accessToken) {
       this.setState({access_token: accessToken, isLoggedIn: true}, () => {
-        const { cookies } = this.props;
-
-        axios.interceptors.request.use((config) => {
-          config.headers = { Authorization: `Bearer ${accessToken}` };
-          config.httpsAgent =  new https.Agent({  
-            rejectUnauthorized: false
-          });
-          return config;
-        }, error => Promise.reject(error));
-
-        axios.interceptors.response.use(response => response,
-          (error) => {
-            if (error.response.request.responseURL.includes('oauth/token')) {
-              return error.response;
-            } if (error.response.status === 401) {
-              cookies.remove('token');
-              window.location.href = '/';
-            }
-            return Promise.reject(error);
-          });
+        this.configureAxios();
       });
-      
-    } 
+    }
   }
 
-  handleLoginLogout = (loggedStatus) => {
+  configureAxios = () => {
+    const { access_token } = this.props;
+    this.API.interceptors.request.use((config) => {
+      config.headers = { Authorization: `Bearer ${access_token}` };
+      return config;
+    }, error => Promise.reject(error));
+  }
+
+  handleLoginLogout = async (loggedStatus) => {
+    await this.configureAxios();
     this.setState({
       isLoggedIn: loggedStatus
     });
@@ -86,7 +85,7 @@ class App extends Component {
     const { isLoggedIn } = this.state;
     const { cookies } = this.props;
     return (
-      <>
+      <APIContext.Provider value={this.API}>
         <CookiesProvider>
           <Router>
             <div>
@@ -101,7 +100,7 @@ class App extends Component {
             </div>
           </Router>
         </CookiesProvider>
-      </>
+      </APIContext.Provider>
     );
   }
 }

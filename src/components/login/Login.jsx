@@ -11,12 +11,11 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
-import axios from 'axios';
 import { withRouter, Redirect } from 'react-router-dom';
 import logo from '../../assets/img/logo_dark_bg.svg';
-import { ApiServer } from '../../settings';
 import { withCookies } from 'react-cookie';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import withAPI from '../../utils/withAPI';
 
 const styles = theme => ({
   main: {
@@ -88,11 +87,11 @@ class SignIn extends Component {
   handleOnSubmit = (e) => {
     e.preventDefault();
     const { email, password } = this.state;
-    const { cookies } = this.props;
+    const { cookies, API } = this.props;
     this.setState({
       isLoading: true
     });
-    axios.post(`${ApiServer}/login`, {user: {email: email, password: password} })
+    API.post('login', {user: {email: email, password: password} })
     .then(data => {
       if (!!data) {
         const tokenReceived = this.getToken(data.headers['authorization']);
@@ -190,4 +189,4 @@ SignIn.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(withRouter(withCookies(SignIn)));
+export default withStyles(styles)(withRouter(withCookies(withAPI(SignIn))));

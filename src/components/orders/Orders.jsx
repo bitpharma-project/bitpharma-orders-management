@@ -7,8 +7,8 @@ import Navbar from '../navbar/Navbar';
 import ActionCable from 'actioncable';
 import { withCookies } from 'react-cookie';
 import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
-import axios from 'axios';
-import { ApiServer, WSConnection, Server } from '../../settings';
+import withAPI from '../../utils/withAPI';
+import { WSConnection } from '../../settings';
 import { NOTIFICATION_TYPES } from '../../constants/NotificationTypes';
 require('babel-polyfill');
 
@@ -41,15 +41,7 @@ class Orders extends Component {
               email: '',
             }
         };
-        this.axiosInstance = axios.create({
-          baseURL: ApiServer,
-          timeout: 15000,
-          headers: {
-            'Authorization': `Bearer ${this.props.cookies.get('token', { path: '/' })}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
+        this.API = this.props.API;
         this.cable = null;
     }
 
@@ -96,7 +88,7 @@ class Orders extends Component {
             console.log(destColumnId);
             console.log(columnsData);
 
-            this.axiosInstance.patch('/order', {
+            this.API.patch('/order', {
               order_id: itemId,
               state: newState
             }).then(data => {
@@ -156,7 +148,7 @@ class Orders extends Component {
 
     componentDidMount = () => {
       
-      this.axiosInstance.get('/user').then(data => {
+      this.API.get('/user').then(data => {
         this.setState({
           user: {
             complete_name: data.data.complete_name,
@@ -170,9 +162,9 @@ class Orders extends Component {
 
     async getColumnsData() {
       const { columnsData } = this.state;
-      let news = await this.axiosInstance.get(`/order/all?status=new`);
-      let progress = await this.axiosInstance.get(`/order/all?status=progress`);
-      let delivered = await this.axiosInstance.get(`/order/all?status=delivered`);
+      let news = await this.API.get(`/order/all?status=new`);
+      let progress = await this.API.get(`/order/all?status=progress`);
+      let delivered = await this.API.get(`/order/all?status=delivered`);
 
       columnsData[0] = this.orderWithTotals(news.data);
       columnsData[1] = this.orderWithTotals(progress.data);
@@ -275,4 +267,4 @@ class Orders extends Component {
     }
 }
 
-export default withStyles(styles)(withCookies(Orders));
+export default withStyles(styles)(withCookies(withAPI(Orders)));
