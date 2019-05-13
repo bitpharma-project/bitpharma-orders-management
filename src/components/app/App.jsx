@@ -10,6 +10,7 @@ import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { NOTIFICATION_TYPES } from "../../constants/NotificationTypes";
 import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
+import { https } from 'https';
 class App extends Component {
 
   constructor(props) {
@@ -54,7 +55,9 @@ class App extends Component {
 
         axios.interceptors.request.use((config) => {
           config.headers = { Authorization: `Bearer ${accessToken}` };
-
+          config.httpsAgent =  new https.Agent({  
+            rejectUnauthorized: false
+          });
           return config;
         }, error => Promise.reject(error));
 
@@ -64,7 +67,7 @@ class App extends Component {
               return error.response;
             } if (error.response.status === 401) {
               cookies.remove('token');
-              window.location.href = '/?signIn=true';
+              window.location.href = '/';
             }
             return Promise.reject(error);
           });
