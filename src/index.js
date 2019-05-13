@@ -20,6 +20,9 @@ const enhancer = composeEnhancers(
 
 const store = createStore(ordersReducer, enhancer);
 
+// THIS IS DANGEROUS, PLEASE REMOVE WHEN API IS SERVER OVER HTTPS.
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 ReactDOM.render(
     <Provider store={store}>
         <App />
