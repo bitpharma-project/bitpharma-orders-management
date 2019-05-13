@@ -4,7 +4,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { ordersReducer } from './store/orders/ordes-reducer';
 import { Provider } from 'react-redux';
 import App from './components/app/App';
-
+require('babel-polyfill');
 
 const composeEnhancers =
   typeof window === 'object' &&

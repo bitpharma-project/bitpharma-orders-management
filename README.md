@@ -1,6 +1,9 @@
 ## Bit orders
 [![Build Status](https://travis-ci.com/notbaddays/bitpharma-orders-management.svg?branch=master)](https://travis-ci.com/notbaddays/bitpharma-orders-management)
 
+##### Netlify deploy
+[![Netlify Status](https://api.netlify.com/api/v1/badges/bbef1499-d83c-4d38-922d-0a2e1738d396/deploy-status)](https://app.netlify.com/sites/bit-orders/deploys)
+
 # Create React App
 
 Crea aplicaciones React sin configuración de compilación.

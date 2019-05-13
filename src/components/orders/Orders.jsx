@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import OrderList from '../order-list/OrderList';
@@ -10,6 +10,8 @@ import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-prov
 import axios from 'axios';
 import { ApiServer, WSConnection, Server } from '../../settings';
 import { NOTIFICATION_TYPES } from '../../constants/NotificationTypes';
+require('babel-polyfill');
+
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -24,7 +26,7 @@ const styles = theme => ({
     }
 });
 
-class Orders extends React.Component {
+class Orders extends Component {
     constructor(props) {
         super(props);
         this.state = {
