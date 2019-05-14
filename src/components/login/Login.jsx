@@ -43,12 +43,16 @@ const TitleWrapper = styled.div`
   margin-top: 5%;
   color: white;
   & > span {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
+
     font-weight: 400;
     font-family: 'Kodchasan', sans-serif;
   }
   @media only screen and (min-width: 768px) { 
     margin-top: 3%;
+    & > span {
+      font-size: 1.75rem;
+    }
   }
 `;
 
@@ -57,7 +61,7 @@ const LoginFormWrapper = styled.div`
   min-height: 340px;
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0px 2px 4px 0px rgb(0, 0, 0, 0.65);
+  box-shadow: 0px 2px 4px 0px rgb(0, 0, 0, 0.10);
   margin: -56px;
   max-width: 640px;
   @media only screen and (min-width: 768px) { 
@@ -127,14 +131,17 @@ const Button = styled.button`
 
 const NavigateNextIcon = styled(NavigateNextIconMui)`
   color: white;
+  padding-right: 4px;
 `;
 
 const EmailIcon = styled(EmailIconMui)`
   color: rgb(77, 51, 153);
+  padding: 4px;
 `;
 
 const LockIcon = styled(LockIconMui)`
   color: rgb(77, 51, 153);
+  padding: 4px;
 `;
 
 const WelcomeBackText = styled.div`
