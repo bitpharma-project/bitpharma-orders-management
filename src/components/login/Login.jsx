@@ -8,6 +8,7 @@ import CircularProgressMui from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 import { ApiServer } from '../../settings';
 import { withCookies } from 'react-cookie';
+import './login.css';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -17,9 +18,7 @@ const Wrapper = styled.div`
 const BackContent = styled.div`
   height: 40%;
   width: 100%;
-  background-image:
-    linear-gradient(to top, rgb(70, 47, 142, 0.95) 65%, rgb(77, 51, 153, 0.85)),
-    url('burbles-purple.jpg');
+  background-image: linear-gradient(to top, rgb(70, 47, 142, 0.95) 65%, rgb(77, 51, 153, 0.85));
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -34,6 +33,7 @@ const LogoWrapper = styled.img`
   box-shadow: 0px 0px 6px 0px #7053c6;
   background-size: cover;
   margin-top: 10%;
+  z-index: 100;
   @media only screen and (min-width: 768px) { 
     margin-top: 3%;
   }
@@ -173,7 +173,6 @@ const ErrorWrapper = styled.div`
 const CircularProgress = styled(CircularProgressMui)`
   color: white !important;
 `;
-
 class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -286,6 +285,18 @@ class Login extends React.Component {
               { isLoading ? <CircularProgress style={{ marginLeft: '7px' }} size={20} color="#fff" /> : <NavigateNextIcon /> }
             </ButtonWrapper>
           </LoginFormWrapper>
+          <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
         </div>
       </Wrapper>
     );
