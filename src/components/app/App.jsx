@@ -133,7 +133,8 @@ class App extends Component {
 
   handleLogout = () => {
     this.setState({
-      isLoggedIn: false
+      isLoggedIn: false,
+      openDrawer: false,
     }, () => {
       this.props.cookies.remove('token', { path: '/' });
       window.location.href = "/";

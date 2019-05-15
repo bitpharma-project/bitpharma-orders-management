@@ -52,7 +52,7 @@ class Profile extends Component {
             imgUrl: data.data.profile_picture_url,
             role: 'Product Manager'
           },
-          imgeSelected: '',
+          imgeSelected: data.data.profile_picture_url,
           currentImg: data.data.profile_picture_url,
         });
       });
@@ -98,8 +98,7 @@ class Profile extends Component {
     const { user, imgeSelected, currentImg } = this.state;
 
     let modifyUser = {
-      complete_name: user.complete_name,
-      profile_picture_url: imgeSelected,
+      complete_name: user.complete_name
     }
 
     this.API.patch('/user', modifyUser).then(data => {
@@ -109,7 +108,10 @@ class Profile extends Component {
         2000,
         NOTIFICATION_TYPES.SUCCESS
       );
-      this.props.rewriteUserInfo(modifyUser);
+      this.props.rewriteUserInfo({
+        complete_name: user.complete_name,
+        profile_picture_url: imgeSelected,
+      });
     }, err => {
       this.props.addNotification(
         ":( Error when saving user info",
