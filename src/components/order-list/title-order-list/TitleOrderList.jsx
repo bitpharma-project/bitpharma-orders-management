@@ -4,7 +4,7 @@ export default class TitleOrderList extends React.Component {
     render() {
         const { totalItems, title, classes } = this.props;
         return(
-            <div style={{ padding: '20px 50px 5px 50px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            <div style={{ padding: '20px 50px 5px 50px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px'}}>
                 <div>
                     <span style={{fontWeight: '600'}} className={classes.titleText}>{title}</span>
                 </div>

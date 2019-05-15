@@ -6,6 +6,15 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
 import { Server } from '../../settings';
+
+const PossibleLongTextFormatter = (text) => {
+  if (text.length > 22) {
+    let cutted = text.substr(0, 22);
+    cutted = cutted + "..."
+    return  cutted;
+  }
+  return text;
+}
 class OrderItem extends Component {
   constructor(props) {
     super(props);
@@ -55,15 +64,22 @@ class OrderItem extends Component {
 
                                                 return (
                                                   <ListItem key={index} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                                                    <div><span>{item.qty} x </span><span style={{color: 'gray'}}>{item.name}</span></div>
-                                                    <div>{ item.price}</div>
+                                                    <div>
+                                                      <span>
+                                                        {`${item.qty} x `}
+                                                      </span>
+                                                      <span style={{color: 'gray'}}>
+                                                        {PossibleLongTextFormatter(item.name)}
+                                                      </span>
+                                                    </div>
+                                                    <div>{ Math.round(item.price * 100) / 100 }</div>
                                                   </ListItem>
                                                 );
                                             })}
                                         </div>
                                         <div style={{ backgroundColor: 'lightgray', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                           <div><span style={{ fontStyle: 'italic', color: 'darkgray' }}>TOTAL:</span></div>
-                                          <div>{ orderTotal }</div>
+                                          <div>{ Math.round(orderTotal * 100) / 100 }</div>
                                         </div>
                                     </div>
                                 </CardContent>

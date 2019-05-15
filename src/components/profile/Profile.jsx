@@ -41,17 +41,38 @@ class Profile extends Component {
   }
 
   componentWillMount = () => {
-    this.API.get('/user').then(data => {
+    const { user } = this.props;
+    if (user.email.length <= 0) {
+      // Fetch the user
+      this.API.get('/user').then(data => {
+        this.setState({
+          user: {
+            complete_name: data.data.complete_name,
+            email: data.data.email,
+            imgUrl: data.data.profile_picture_url,
+            role: 'Product Manager'
+          },
+          imgeSelected: '',
+          currentImg: data.data.profile_picture_url,
+        });
+      });
+    } else {
       this.setState({
         user: {
-          complete_name: data.data.complete_name,
-          email: data.data.email,
-          imgUrl: data.data.profile_picture_url,
+          complete_name: user.fullName,
+          email: user.email,
+          imgUrl: user.photoUrl,
           role: 'Product Manager'
         },
-        imgeSelected: ''
+        imgeSelected: user.photoUrl,
+        currentImg: user.photoUrl,
       });
-    });
+    }
+  }
+
+  componentWillUnmount = () => {
+    // Set user name to previous
+    this.props.cleanUserNameCopy();
   }
 
   handleChange = (e) => {
@@ -62,13 +83,25 @@ class Profile extends Component {
     });
   }
 
+  handleNameChange = (e) => {
+    const { user } = this.state;
+    user.complete_name = e.target.value;
+    this.setState({
+      user: user
+    }, () => {
+      this.props.onNameChange(this.state.user.complete_name);
+    });
+  }
+
   saveUserInfo = (e) => {
     e.preventDefault();
-    const { user, imgeSelected } = this.state;
+    const { user, imgeSelected, currentImg } = this.state;
+
     let modifyUser = {
       complete_name: user.complete_name,
-      profile_picture_url: imgeSelected
+      profile_picture_url: imgeSelected,
     }
+
     this.API.patch('/user', modifyUser).then(data => {
       this.props.addNotification(
         "Success",
@@ -76,6 +109,7 @@ class Profile extends Component {
         2000,
         NOTIFICATION_TYPES.SUCCESS
       );
+      this.props.rewriteUserInfo(modifyUser);
     }, err => {
       this.props.addNotification(
         ":( Error when saving user info",
@@ -85,7 +119,7 @@ class Profile extends Component {
       );
     });
 
-    if(!!imgeSelected) {
+    if(imgeSelected && imgeSelected !== currentImg) {
       let imageData = new FormData();
       imageData.append("image", imgeSelected);
 
@@ -133,7 +167,6 @@ class Profile extends Component {
 
     return(
       <form encType="multipart/form-data">
-          <NavBar handleLogout={this.handleLogout} user={user} />
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <span style={{ marginTop: '20px', marginBottom: '2opx', marginLeft: '15px', fontWeight: '600', fontSize: '1.25rem'}}>Profile information</span>
@@ -151,7 +184,7 @@ class Profile extends Component {
                   label="Full name"
                   className={classes.textField}
                   value={this.state.user.complete_name}
-                  onChange={this.handleChange}
+                  onChange={this.handleNameChange}
                   margin="normal"
                   fullWidth={true}
                 />
@@ -159,7 +192,7 @@ class Profile extends Component {
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <TextField
                   id="email"
-                  label="Name"
+                  label="Email"
                   disabled
                   className={classes.textField}
                   value={this.state.user.email}
