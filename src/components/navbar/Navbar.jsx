@@ -129,7 +129,7 @@ const ArrowIcon = styled(ArrowIconMui)`
 `;
 
 const PossibleLongTextFormatter = (text) => {
-  if (text.length > 30) {
+  if (text && text.length > 30) {
     let cutted = text.substr(0, 25);
     cutted = cutted + "..."
     return  cutted;

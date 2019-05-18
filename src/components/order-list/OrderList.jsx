@@ -27,6 +27,7 @@ const styles = theme => ({
 
 const ListWrapper = styled.div`
   max-height: calc(100vh - 160px);
+  height: calc(100vh - 160px);
   overflow-y: auto;
   max-width: 360px;
   margin: 0 auto;
