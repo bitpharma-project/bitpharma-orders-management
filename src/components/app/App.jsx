@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import { withRouter, Switch } from 'react-router-dom'
+import { Switch } from 'react-router-dom'
 import { withCookies, CookiesProvider } from 'react-cookie';
 import axios from 'axios';
+import { notification } from 'antd';
 import { Route, BrowserRouter as Router, Redirect } from 'react-router-dom';
 import Login from '../login/Login';
 import Orders from '../orders/Orders';
 import Profile from '../profile/Profile';
-import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { NOTIFICATION_TYPES } from "../../constants/NotificationTypes";
-import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
 import { APIContext } from '../../utils/API';
 import { ApiServer } from '../../settings';
 import Navbar from '../navbar/Navbar';
 import SideMenu from '../side-menu/SideMenu';
+import 'antd/dist/antd.css';
 class App extends Component {
 
   constructor(props) {
@@ -31,10 +31,6 @@ class App extends Component {
       }
     }
 
-    this.notificationDOMRef_info = React.createRef();
-    this.notificationDOMRef_sucess = React.createRef();
-    this.notificationDOMRef_error = React.createRef();
-
     this.API = axios.create({
       baseURL: ApiServer,
       responseType: "json"
@@ -47,24 +43,31 @@ class App extends Component {
   }
 
   addNotification = (title, message, duration, type) => {
-    let obj = this.notificationDOMRef_info;
-    if (type === NOTIFICATION_TYPES.SUCCESS)
-      obj = this.notificationDOMRef_sucess;
-    else if (type === NOTIFICATION_TYPES.ERROR)
-      obj = this.notificationDOMRef_error;
-
-    obj.current.addNotification({
-      title: title,
-      message: message,
-      type: type,
-      insert: "top",
-      container: "top-right",
-      animationIn: ["animated", "fadeIn"],
-      animationOut: ["animated", "fadeOut"],
-      dismiss: { duration: duration },
-      dismissable: { click: true }
+    notification[type]({
+      message: title,
+      description: message,
     });
   };
+
+  // addNotification = (title, message, duration, type) => {
+  //   let obj = this.notificationDOMRef_info;
+  //   if (type === NOTIFICATION_TYPES.SUCCESS)
+  //     obj = this.notificationDOMRef_sucess;
+  //   else if (type === NOTIFICATION_TYPES.ERROR)
+  //     obj = this.notificationDOMRef_error;
+
+  //   obj.current.addNotification({
+  //     title: title,
+  //     message: message,
+  //     type: type,
+  //     insert: "top",
+  //     container: "top-right",
+  //     animationIn: ["animated", "fadeIn"],
+  //     animationOut: ["animated", "fadeOut"],
+  //     dismiss: { duration: duration },
+  //     dismissable: { click: true }
+  //   });
+  // };
 
   componentWillMount() {
     // Get user access token
@@ -189,9 +192,6 @@ class App extends Component {
                 isLoggedIn ?
                   <Navbar toggleDrawer={this.toggleDrawer} user={user} /> : null
               }
-              <ReactNotification ref={this.notificationDOMRef_info} />
-              <ReactNotification ref={this.notificationDOMRef_error} />
-              <ReactNotification ref={this.notificationDOMRef_sucess} />
               <Switch>
                 <Route exact path='/' render={() => (isLoggedIn)? <Redirect to='/orders' /> : <Login handleLogin={this.handleLoginLogout} />} />
                 <Route exact path='/orders' render={() => (!isLoggedIn)? <Redirect to='/' /> : <Orders user={user} addNotification={this.addNotification} handleLoginLogout={this.handleLoginLogout} cookies={cookies}  />} />
