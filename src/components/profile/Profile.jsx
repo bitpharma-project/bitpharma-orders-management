@@ -4,8 +4,9 @@ import { Server } from '../../settings';
 import { withCookies } from 'react-cookie';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { Button } from '@material-ui/core';
+import { Button as ButtonMui } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
+import { Upload, message, Button, Icon } from 'antd';
 import { NOTIFICATION_TYPES } from '../../constants/NotificationTypes';
 import withAPI from '../../utils/withAPI';
 
@@ -54,7 +55,9 @@ class Profile extends Component {
           },
           oldName: data.data.complete_name,
           imgeSelected: '',
+          imgeSelectedObj: null,
           currentImg: data.data.profile_picture_url,
+          fileList: []
         });
       });
     } else {
@@ -65,8 +68,11 @@ class Profile extends Component {
           imgUrl: user.photoUrl,
           role: 'Product Manager'
         },
+        oldName: user.fullName,
         imgeSelected: '',
+        imgeSelectedObj: null,
         currentImg: user.photoUrl,
+        fileList: []
       });
     }
   }
@@ -96,7 +102,7 @@ class Profile extends Component {
 
   saveUserInfo = (e) => {
     e.preventDefault();
-    const { user, imgeSelected, currentImg, oldName } = this.state;
+    const { user, imgeSelected, currentImg, oldName, imgeSelectedObj } = this.state;
 
     let modifyUser = {
       complete_name: user.complete_name
@@ -126,7 +132,7 @@ class Profile extends Component {
 
     if(imgeSelected && imgeSelected !== currentImg) {
       let imageData = new FormData();
-      imageData.append("image", imgeSelected);
+      imageData.append("image", imgeSelectedObj, imgeSelected);
 
       this.API.post('/user/profile_picture', imageData, {
         headers: {
@@ -138,7 +144,11 @@ class Profile extends Component {
         console.log(data);
         user.imgUrl = response.location;
         this.setState({
-          user: user
+          user: user,
+          fileList: [],
+          imgeSelectedObj: null,
+          imgeSelected: '',
+
         }, () => {
           // Propagate new user photo
           this.props.handleNewPhoto(response.location);
@@ -156,9 +166,12 @@ class Profile extends Component {
   }
 
   handleImage = (e) => {
-    const input = e.target;
+    console.log(e.file);
+    const input = e;
     this.setState({
-      imgeSelected: e.target.files[0]
+      imgeSelected: e.file.originFileObj.name,
+      imgeSelectedObj: e.file.originFileObj,
+      fileList: e.fileList,
     }, () => {
       // Show image right away
       this.readURL(input);
@@ -171,20 +184,20 @@ class Profile extends Component {
 
   readURL = (input) => {
     console.log(input);
-    if (!!input && !!input.files && !!input.files[0]) {
+    if (!!input && !!input.file) {
       let reader = new FileReader();
-      console.log('will render image', input.files[0]);
+      console.log('will render image', input.file);
       reader.onload = (e) => {
         document.getElementById('user-image')
           .src = e.target.result;
       };
-      reader.readAsDataURL(input.files[0]);
+      reader.readAsDataURL(input.file.originFileObj);
     }
   }
 
   render() {
     const { classes } = this.props;
-    const { user } = this.state;
+    const { user, fileList } = this.state;
     
     if (user == null) return null;
 
@@ -200,7 +213,12 @@ class Profile extends Component {
           </div>
           <div style={{ wisth: '100%', display: 'flex', flexDirection: 'column', margin: '25px', justifyContent: 'center', alignItems: 'center' }}>
             <img id="user-image" style={{ borderRadius: '50%', margin: '16px' }} height="160px" width="160px" alt={user.email} src={user.imgUrl? `${Server}/${user.imgUrl}` : useImgUrl} />
-            <input type="file" name="img" placeholder="Select image" onChange={this.handleImage} />
+            {/* <input type="file" name="img" placeholder="Select image" onChange={this.handleImage} /> */}
+            <Upload fileList={fileList} listType='picture-card' name="img" placeholder="Select image" onChange={this.handleImage}>
+              { 
+                fileList.length >= 1 ? null : <Button><Icon type="upload" />Click to Upload</Button>
+              }
+            </Upload>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
             <Paper style={{ width: '600px', padding: '16px', margin: '16px'  }}>
@@ -237,7 +255,7 @@ class Profile extends Component {
               </div>
             </Paper>
             <div>
-              <Button type="submit" variant="outlined" color="primary" fullWidth className={classes.button} onClick={this.saveUserInfo}>Save</Button>
+              <ButtonMui type="submit" variant="outlined" color="primary" fullWidth className={classes.button} onClick={this.saveUserInfo}>Save</ButtonMui>
             </div>
           </div>
       </form>
