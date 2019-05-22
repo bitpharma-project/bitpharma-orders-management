@@ -171,6 +171,12 @@ class App extends Component {
     }));
   }
 
+  handleNewPhoto = (location) => {
+    let user = { ...this.state.user };
+    user.photoUrl = location;
+    this.setState({ user });
+  }
+
   render() {
     const { isLoggedIn, openDrawer, user } = this.state;
     const { cookies } = this.props;
@@ -189,7 +195,7 @@ class App extends Component {
               <Switch>
                 <Route exact path='/' render={() => (isLoggedIn)? <Redirect to='/orders' /> : <Login handleLogin={this.handleLoginLogout} />} />
                 <Route exact path='/orders' render={() => (!isLoggedIn)? <Redirect to='/' /> : <Orders user={user} addNotification={this.addNotification} handleLoginLogout={this.handleLoginLogout} cookies={cookies}  />} />
-                <Route exact path='/profile' render={() => (!isLoggedIn)? <Redirect to='/' /> : <Profile user={user} rewriteUserInfo={this.rewriteUserInfo} cleanUserNameCopy={this.cleanUserNameCopy} onNameChange={this.onProfileNameChange} addNotification={this.addNotification} handleLoginLogout={this.handleLoginLogout} cookies={cookies} />} />
+                <Route exact path='/profile' render={() => (!isLoggedIn)? <Redirect to='/' /> : <Profile handleNewPhoto={this.handleNewPhoto} user={user} rewriteUserInfo={this.rewriteUserInfo} cleanUserNameCopy={this.cleanUserNameCopy} onNameChange={this.onProfileNameChange} addNotification={this.addNotification} handleLoginLogout={this.handleLoginLogout} cookies={cookies} />} />
               </Switch>
               <SideMenu handleLogut={this.handleLogout} open={openDrawer} onClose={this.closeDrawer} onKeyDownDrawer={this.doNothing} onClickDrawer={this.doNothing} />
             </div>

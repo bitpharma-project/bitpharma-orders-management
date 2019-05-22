@@ -52,7 +52,8 @@ class Profile extends Component {
             imgUrl: data.data.profile_picture_url,
             role: 'Product Manager'
           },
-          imgeSelected: data.data.profile_picture_url,
+          oldName: data.data.complete_name,
+          imgeSelected: '',
           currentImg: data.data.profile_picture_url,
         });
       });
@@ -64,7 +65,7 @@ class Profile extends Component {
           imgUrl: user.photoUrl,
           role: 'Product Manager'
         },
-        imgeSelected: user.photoUrl,
+        imgeSelected: '',
         currentImg: user.photoUrl,
       });
     }
@@ -95,31 +96,33 @@ class Profile extends Component {
 
   saveUserInfo = (e) => {
     e.preventDefault();
-    const { user, imgeSelected, currentImg } = this.state;
+    const { user, imgeSelected, currentImg, oldName } = this.state;
 
     let modifyUser = {
       complete_name: user.complete_name
     }
 
-    this.API.patch('/user', modifyUser).then(data => {
-      this.props.addNotification(
-        "Success",
-        "User info was saved successfully!",
-        2000,
-        NOTIFICATION_TYPES.SUCCESS
-      );
-      this.props.rewriteUserInfo({
-        complete_name: user.complete_name,
-        profile_picture_url: imgeSelected,
+    if (user.complete_name !== oldName) {
+      this.API.patch('/user', modifyUser).then(data => {
+        this.props.addNotification(
+          "Success",
+          "User info was saved successfully!",
+          2000,
+          NOTIFICATION_TYPES.SUCCESS
+        );
+        this.props.rewriteUserInfo({
+          complete_name: user.complete_name,
+          profile_picture_url: imgeSelected,
+        });
+      }, err => {
+        this.props.addNotification(
+          ":( Error when saving user info",
+          "Please, contact your administrator if the problem persist.",
+          2000,
+          NOTIFICATION_TYPES.ERROR
+        );
       });
-    }, err => {
-      this.props.addNotification(
-        ":( Error when saving user info",
-        "Please, contact your administrator if the problem persist.",
-        2000,
-        NOTIFICATION_TYPES.ERROR
-      );
-    });
+    }
 
     if(imgeSelected && imgeSelected !== currentImg) {
       let imageData = new FormData();
@@ -132,9 +135,13 @@ class Profile extends Component {
         }
       }).then(data => {
         let response = data.data;
-        user.imgUrl = response.profile_picture_url;
+        console.log(data);
+        user.imgUrl = response.location;
         this.setState({
           user: user
+        }, () => {
+          // Propagate new user photo
+          this.props.handleNewPhoto(response.location);
         });
        
       }, err => {
@@ -149,13 +156,30 @@ class Profile extends Component {
   }
 
   handleImage = (e) => {
+    const input = e.target;
     this.setState({
       imgeSelected: e.target.files[0]
+    }, () => {
+      // Show image right away
+      this.readURL(input);
     });
   }
 
   handleLogout = (e) => {
     this.props.handleLoginLogout(e);
+  }
+
+  readURL = (input) => {
+    console.log(input);
+    if (!!input && !!input.files && !!input.files[0]) {
+      let reader = new FileReader();
+      console.log('will render image', input.files[0]);
+      reader.onload = (e) => {
+        document.getElementById('user-image')
+          .src = e.target.result;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
   }
 
   render() {
@@ -175,7 +199,7 @@ class Profile extends Component {
             </div>
           </div>
           <div style={{ wisth: '100%', display: 'flex', flexDirection: 'column', margin: '25px', justifyContent: 'center', alignItems: 'center' }}>
-            <img style={{ borderRadius: '50%', margin: '16px' }} height="160px" width="160px" alt={user.email} src={user.imgUrl? `${Server}/${user.imgUrl}` : useImgUrl} />
+            <img id="user-image" style={{ borderRadius: '50%', margin: '16px' }} height="160px" width="160px" alt={user.email} src={user.imgUrl? `${Server}/${user.imgUrl}` : useImgUrl} />
             <input type="file" name="img" placeholder="Select image" onChange={this.handleImage} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
