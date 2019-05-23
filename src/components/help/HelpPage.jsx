@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 const SearchBarWrapper = styled.div`
   width: 100%;
   height: 100%;
-  background: linear-gradient(to right, #5639ac 0%, #7053c6 100%);
+  background: linear-gradient(to right, #5639ac 120%, #7053c6 100%);
   box-shadow: 0px 0px 8px 0px rgb(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
@@ -84,6 +84,7 @@ const MenuOption = styled.div`
   display: grid;
   grid-template-columns: 99% 1%;
   cursor: pointer;
+  box-shadow: 0px 0px 8px 0px rgb(0, 0, 0, 0.05);
   &:last-child {
     margin-bottom: 0px;
   }
@@ -94,7 +95,7 @@ const MenuOption = styled.div`
     background-color: ${props => props.active ? '#5639ac' : '#ccc'};
   }
   &:hover {
-
+    box-shadow: 0px 0px 8px 4px rgb(0, 0, 0, 0.1);
     ${Indicator} {
       background-color: ${props => !props.active ? '#7053c6' : '#5639ac'};
     }
@@ -106,6 +107,8 @@ const Results = styled.div`
   background-color: white;
   display: grid;
   grid-template-rows: 20% 80%;
+  box-shadow: 0px 0px 8px 0px rgb(0, 0, 0, 0.05);
+  border-radius: 4px;
 `;
 
 const ResultTitle = styled.div`
