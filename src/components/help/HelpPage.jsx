@@ -58,14 +58,14 @@ const ContentWrapper = styled.div`
   height: 100%;
   display: grid;
   grid-template-columns: 30% 2% 68%;
-  margin-top: 16px;
+  margin-top: 32px;
 `;
 
 const Sidebar = styled.div`
-  width: 100%;
+  width: 90%;
   height: 70%;
   overflow: scroll;
-  background-color: rgb(255, 255, 255, 0.85);
+  margin: 0 auto;
 `;
 
 const Indicator = styled.div`
@@ -79,12 +79,12 @@ const MenuOption = styled.div`
   height: 48px;
   margin-top: 12px;
   margin-bottom: 12px;
-  background-color: #f2f2f2;
-  color: ${props => props.active ? '#5639ac' : '#b3b3b3'};
+  background-color: ${props => props.active ? '#7053c6' : '#f2f2f2'};
+  color: ${props => props.active ? '#fff' : '#b3b3b3'};
   display: grid;
   grid-template-columns: 99% 1%;
   cursor: pointer;
-  box-shadow: 0px 0px 8px 0px rgb(0, 0, 0, 0.05);
+  box-shadow: ${props => props.active ? '0px 0px 8px 4px rgb(0, 0, 0, 0.1)' : '0px 0px 8px 0px rgb(0, 0, 0, 0.05)'};
   &:last-child {
     margin-bottom: 0px;
   }
@@ -92,23 +92,24 @@ const MenuOption = styled.div`
     margin-top: 0px;
   }
   & > ${Indicator} {
-    background-color: ${props => props.active ? '#5639ac' : '#ccc'};
+    background-color: ${props => props.active ? '#9f8cd9' : '#ccc'};
   }
   &:hover {
     box-shadow: 0px 0px 8px 4px rgb(0, 0, 0, 0.1);
     ${Indicator} {
-      background-color: ${props => !props.active ? '#7053c6' : '#5639ac'};
+      background-color: #9f8cd9;
     }
   }
 `;
 
 const Results = styled.div`
-  width: 100%;
+  width: 90%;
   background-color: white;
   display: grid;
   grid-template-rows: 20% 80%;
   box-shadow: 0px 0px 8px 0px rgb(0, 0, 0, 0.05);
   border-radius: 4px;
+  margin: 0 auto;
 `;
 
 const ResultTitle = styled.div`
