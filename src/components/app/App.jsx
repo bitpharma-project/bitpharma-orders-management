@@ -4,6 +4,7 @@ import { withCookies, CookiesProvider } from 'react-cookie';
 import axios from 'axios';
 import { notification } from 'antd';
 import { Route, BrowserRouter as Router, Redirect } from 'react-router-dom';
+import HelpPage from '../help/HelpPage';
 import Login from '../login/Login';
 import Orders from '../orders/Orders';
 import Profile from '../profile/Profile';
@@ -194,6 +195,7 @@ class App extends Component {
               }
               <Switch>
                 <Route exact path='/' render={() => (isLoggedIn)? <Redirect to='/orders' /> : <Login handleLogin={this.handleLoginLogout} />} />
+                <Route exact path='/support' render={() => (!isLoggedIn)? <Redirect to='/' /> : <HelpPage />} />
                 <Route exact path='/orders' render={() => (!isLoggedIn)? <Redirect to='/' /> : <Orders user={user} addNotification={this.addNotification} handleLoginLogout={this.handleLoginLogout} cookies={cookies}  />} />
                 <Route exact path='/profile' render={() => (!isLoggedIn)? <Redirect to='/' /> : <Profile handleNewPhoto={this.handleNewPhoto} user={user} rewriteUserInfo={this.rewriteUserInfo} cleanUserNameCopy={this.cleanUserNameCopy} onNameChange={this.onProfileNameChange} addNotification={this.addNotification} handleLoginLogout={this.handleLoginLogout} cookies={cookies} />} />
               </Switch>
