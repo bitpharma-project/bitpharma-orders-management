@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import OrderList from '../order-list/OrderList';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -13,20 +12,6 @@ import { WSConnection } from '../../settings';
 import { NOTIFICATION_TYPES } from '../../constants/NotificationTypes';
 import styled from 'styled-components';
 require('babel-polyfill');
-
-const styles = theme => ({
-    root: {
-        flexGrow: 1,
-    },
-    paper: {
-        padding: theme.spacing.unit * 2,
-        textAlign: 'center',
-        color: theme.palette.text.primary,
-    },
-    titleText: {
-        fontFamily: 'Open Sans, sans-serif'
-    }
-});
 
 const GridWrapper = styled.div`
   width: 100%;
@@ -207,6 +192,9 @@ class Orders extends Component {
   handleReceived = (message) => {
       const response = message;
       const { columnsData } = this.state;
+
+      console.log('RECEIVE DATA >>>>', message);
+
       if (!!response && !!response.orders_new && !!response.orders_progress && !!response.orders_delivery) {
         columnsData[0] = this.orderWithTotals(response.orders_new);
         columnsData[1] = this.orderWithTotals(response.orders_progress);
@@ -216,10 +204,6 @@ class Orders extends Component {
           columnsData: columnsData
         });
       }
-  }
-
-  handleLogout = (e) => {
-    this.props.handleLoginLogout(e);
   }
 
   render() {
@@ -279,4 +263,4 @@ class Orders extends Component {
   }
 }
 
-export default withStyles(styles)(withCookies(withAPI(Orders)));
+export default withCookies(withAPI(Orders));
