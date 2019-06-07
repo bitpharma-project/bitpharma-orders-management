@@ -5,7 +5,28 @@ import { Draggable } from 'react-beautiful-dnd'; // Both at the same time
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
+import styled from 'styled-components';
 import { Server } from '../../settings';
+
+const UserPhotoWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const UserImage = styled.img`
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+`;
+
+const Username = styled.div`
+  & > span {
+    font-weight: 400;
+    font-size: 1.08rem;
+  }
+  margin-left: 12px;
+`;
 
 const PossibleLongTextFormatter = (text) => {
   if (text.length > 22) {
@@ -43,7 +64,14 @@ class OrderItem extends Component {
                                     <div style={{display: 'flex', flexDirection: 'column'}}>
                                         <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                                                <img alt="" src={user.profile_picture_url? `${Server}/${user.profile_picture_url}` : useImgUrl} width="35px" height="35px" style={{borderRadius: '50%'}} />
+                                                <UserPhotoWrapper>
+                                                  <UserImage alt={user.email} src={user.profile_picture_url? `${Server}/${user.profile_picture_url}` : useImgUrl} />
+                                                  <Username>
+                                                    <span>
+                                                      { PossibleLongTextFormatter(user.complete_name) }
+                                                    </span>
+                                                  </Username>
+                                                </UserPhotoWrapper>
                                                 <div style={{marginLeft: '8px'}}>
                                                     <span style={{fontWeight: '600'}}>{user.first_name} {user.last_name}</span>
                                                 </div>

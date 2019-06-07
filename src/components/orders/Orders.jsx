@@ -167,6 +167,8 @@ class Orders extends Component {
       columnsData[1] = this.orderWithTotals(progress.data);
       columnsData[2] = this.orderWithTotals(delivered.data);
 
+      console.log(columnsData);
+
       this.setState({
         columnsData: columnsData,
         isLoading: false,
