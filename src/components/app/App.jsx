@@ -108,12 +108,14 @@ class App extends Component {
   getCurrentUserData = () => {
     this.API.get(`${ApiServer}/user`).then(data => {
       const response = data.data;
+      console.log(data.data);
       this.setState({
         user: {
           fullName: response.complete_name,
           email: response.email,
           photoUrl: response.profile_picture_url,
-          role: 'Product Manager'
+          role: 'Product Manager',
+          drugStore: response.drug_stores[0],
         },
       })
     });
@@ -171,6 +173,7 @@ class App extends Component {
         photoUrl: (!!modifiedUser.profile_picture_url) ? modifiedUser.profile_picture_url : prevState.photoUrl,
         email: modifiedUser.email,
         role: 'Product Manager',
+        drugStore: prevState.drugStore
       }
     }));
   }

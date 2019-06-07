@@ -138,7 +138,7 @@ const PossibleLongTextFormatter = (text) => {
 }
 
 class Navbar extends Component {
-  
+
   toggleDrawer = () => {
     this.props.toggleDrawer();
   }
@@ -159,7 +159,7 @@ class Navbar extends Component {
           <LogoText>Bit orders</LogoText>
         </LogoSection>
         <SearchSection>
-           <span>Farmacia <span id="drugstore-name">Santa Ana</span></span>
+           <span>{ (!!user && !!user.drugStore && !!user.drugStore.name) ? user.drugStore.name : 'Farmacia - '}</span>
         </SearchSection>
         <UserSection>
           <UserSectionWrapper>
