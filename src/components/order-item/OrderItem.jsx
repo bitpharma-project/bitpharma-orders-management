@@ -38,7 +38,7 @@ class OrderItem extends Component {
                        {...provided.draggableProps}
                        {...provided.dragHandleProps}>
 
-                            <Card style={{zIndex: '100', width: '100%', margin: '7px'}} key={id} alignItems="flex-start">
+                            <Card style={{zIndex: '100', width: '100%', margin: '7px', alignItems: 'flex-start'}} key={id}>
                                 <CardContent>
                                     <div style={{display: 'flex', flexDirection: 'column'}}>
                                         <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>

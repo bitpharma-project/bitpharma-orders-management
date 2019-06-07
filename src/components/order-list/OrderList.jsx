@@ -51,7 +51,7 @@ class OrderList extends Component{
               classes={classes}
               totalItems={ (!!orders)? orders.length : 0}
             />
-            <Droppable droppableId={droppableId}>
+            <Droppable droppableId={droppableId.toString()}>
             {(provided) => (
               <ListWrapper 
                 ref={provided.innerRef} 

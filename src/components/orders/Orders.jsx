@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import OrderList from '../order-list/OrderList';
 import { DragDropContext } from 'react-beautiful-dnd';
+import { CircularProgress } from '@material-ui/core';
 import Navbar from '../navbar/Navbar';
 import ActionCable from 'actioncable';
 import { withCookies } from 'react-cookie';
@@ -33,6 +34,21 @@ const GridWrapper = styled.div`
   margin-top: 64px;
 `;
 
+const LoadingWrapper = styled.div`
+  width: 100%;
+  margin-top: 10%;
+  height: auto;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  & > div {
+    & > svg {
+      color: #5639ac;
+    }
+  }
+`;
+
 class Orders extends Component {
   constructor(props) {
     super(props);
@@ -42,11 +58,6 @@ class Orders extends Component {
           [], [], []
         ],
         isLoading: true,
-        user: {
-          complete_name: '',
-          imgUrl: '',
-          email: '',
-        }
     };
     this.API = this.props.API;
     this.cable = null;
@@ -59,19 +70,20 @@ class Orders extends Component {
       let source = event.source;
       let itemId = event.draggableId;
 
-      if(!!destination && !!source) {
+      if ( (!!destination && !!source)) {
 
+        if (destination.droppableId !== source.droppableId) {
           // Old data values
           let newOrders = columnsData[0];
           let progressOrders = columnsData[1];
           let deliveredOrders = columnsData[2];
 
           //Get destinatino column
-          let destColumnId = destination.droppableId;
+          let destColumnId = parseInt(destination.droppableId);
           let destColumn = columnsData[destColumnId-1];
 
           //Get source column
-          let sourceColumnId = source.droppableId;
+          let sourceColumnId = parseInt(source.droppableId);
           let sourceColumn = columnsData[sourceColumnId-1];
 
           //Get dragged item
@@ -89,11 +101,6 @@ class Orders extends Component {
           let newState = 'new';
           if (destColumnId === 2) newState = 'progress';
           if (destColumnId === 3) newState = 'delivered';
-
-          
-          console.log('BEFORE UPDATE ON SERVER');
-          console.log(destColumnId);
-          console.log(columnsData);
 
           this.API.patch('/order', {
             order_id: itemId,
@@ -117,9 +124,11 @@ class Orders extends Component {
               );
             });
           })
-        
+        } else {
+          console.log('Item dropped in same column, no action needed.');
+        }
       } else {
-          console.log('Source and destination cannot be null.');
+        console.log('Source and destination cannot be null.');
       }
 
       showColumnHighLight[0] = false;
@@ -143,42 +152,40 @@ class Orders extends Component {
           showColumnHighLight[columnId-2] = true;
       }
 
+      console.log('DRAG START >>>>>');
+      console.log(showColumnHighLight);
+
       this.setState({
           showColumnHighLight: showColumnHighLight
       });
   }
 
   componentWillMount = () => {
-    console.log("#################");
     this.cable = ActionCable.createConsumer(`${WSConnection}/cable`);
   }
 
   componentDidMount = () => {
-    
-    this.API.get('/user').then(data => {
-      this.setState({
-        user: {
-          complete_name: data.data.complete_name,
-          email: data.data.email,
-          imgUrl: data.data.profile_picture_url,
-        }
-      });
-    });
     this.getColumnsData();
   }
 
-  async getColumnsData() {
+  getColumnsData() {
     const { columnsData } = this.state;
-    let news = await this.API.get(`/order/all?status=new`);
-    let progress = await this.API.get(`/order/all?status=progress`);
-    let delivered = await this.API.get(`/order/all?status=delivered`);
-
-    columnsData[0] = this.orderWithTotals(news.data);
-    columnsData[1] = this.orderWithTotals(progress.data);
-    columnsData[2] = this.orderWithTotals(delivered.data);
 
     this.setState({
-      columnsData: columnsData
+      isLoading: true,
+    }, async () => {
+      let news = await this.API.get(`/order/all?status=new`);
+      let progress = await this.API.get(`/order/all?status=progress`);
+      let delivered = await this.API.get(`/order/all?status=delivered`);
+
+      columnsData[0] = this.orderWithTotals(news.data);
+      columnsData[1] = this.orderWithTotals(progress.data);
+      columnsData[2] = this.orderWithTotals(delivered.data);
+
+      this.setState({
+        columnsData: columnsData,
+        isLoading: false,
+      });
     });
   }
 
@@ -205,8 +212,6 @@ class Orders extends Component {
         columnsData[1] = this.orderWithTotals(response.orders_progress);
         columnsData[2] = this.orderWithTotals(response.orders_delivery);
 
-        console.log('Receive order!!');
-        console.log(message);
         this.setState({
           columnsData: columnsData
         });
@@ -218,18 +223,21 @@ class Orders extends Component {
   }
 
   render() {
-    const { classes, cookies } = this.props;
-    const { columnsData, showColumnHighLight, user } = this.state;
+    const { columnsData, showColumnHighLight, isLoading } = this.state;
     let newsId = 1;
     let progressId = 2;
     let deliveredId = 3;
-    
-    console.log('COLUMNS DATA: :::: ::');
-    console.log(columnsData);
 
+    if (isLoading) {
+      return (
+        <LoadingWrapper>
+          <CircularProgress />
+        </LoadingWrapper>
+      );
+    }
 
     return (
-      <div>
+      <>
         <ActionCableProvider cable={this.cable}>
           <ActionCableConsumer
             channel="OrderNotificationChannel"
@@ -240,34 +248,33 @@ class Orders extends Component {
                   <Grid container>
                       <Grid item xs={4}>
                           <OrderList 
-                              title="Incoming"
-                              showHighlight={showColumnHighLight[0]}
-                              droppableId={newsId}
-                              onDragItem={this.handleDrag}
-                              orders={columnsData[newsId-1]} />
-
+                            title="Incoming"
+                            showHighlight={showColumnHighLight[0]}
+                            droppableId={newsId}
+                            onDragItem={this.handleDrag}
+                            orders={columnsData[newsId-1]} />
                       </Grid>
                       <Grid item xs={4}>
                           <OrderList
-                              title="In Progress"
-                              showHighlight={showColumnHighLight[1]}
-                              droppableId={progressId}
-                              onDragItem={this.handleDrag}
-                              orders={columnsData[progressId-1]} />
+                            title="In Progress"
+                            showHighlight={showColumnHighLight[1]}
+                            droppableId={progressId}
+                            onDragItem={this.handleDrag}
+                            orders={columnsData[progressId-1]} />
                       </Grid>
                       <Grid item xs={4}>
                           <OrderList 
-                              title="Delivered"
-                              showHighlight={showColumnHighLight[2]}
-                              droppableId={deliveredId}
-                              onDragItem={this.handleDrag}
-                              orders={columnsData[deliveredId-1]} />   
+                            title="Delivered"
+                            showHighlight={showColumnHighLight[2]}
+                            droppableId={deliveredId}
+                            onDragItem={this.handleDrag}
+                            orders={columnsData[deliveredId-1]} />   
                       </Grid>
                   </Grid>
               </GridWrapper>
           </DragDropContext>
           </ActionCableProvider>
-      </div>
+      </>
     );
   }
 }

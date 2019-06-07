@@ -138,10 +138,7 @@ const PossibleLongTextFormatter = (text) => {
 }
 
 class Navbar extends Component {
-  constructor(props) {
-    super(props);
-  }
-
+  
   toggleDrawer = () => {
     this.props.toggleDrawer();
   }
