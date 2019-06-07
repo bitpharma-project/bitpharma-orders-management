@@ -61,14 +61,15 @@ class OrderList extends Component{
                     orders.map((order) => {
                       return (
                           <OrderItem 
-                              handleOnDragItem={this.props.onDragItem}
-                              key={order.id} 
-                              id={order.id}
-                              user={order.user}
-                              orderedItems={order.products}
-                              classes={classes}
-                              orderTotal={order.order_total}
-                              index={order.id} />
+                            handleOnDragItem={this.props.onDragItem}
+                            key={order.id} 
+                            id={order.id}
+                            user={order.user}
+                            orderedItems={order.products}
+                            classes={classes}
+                            orderTotal={order.order_total}
+                            index={order.id}
+                            showOrderInfo={this.props.showOrderInfo} />
                           );
                       }) : null}
                 </List>

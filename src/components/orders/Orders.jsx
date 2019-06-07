@@ -6,10 +6,12 @@ import { CircularProgress } from '@material-ui/core';
 import Navbar from '../navbar/Navbar';
 import ActionCable from 'actioncable';
 import { withCookies } from 'react-cookie';
+import BitModal from '../bit-modal/BitModal';
 import { ActionCableProvider, ActionCableConsumer } from 'react-actioncable-provider';
 import withAPI from '../../utils/withAPI';
 import { WSConnection } from '../../settings';
 import { NOTIFICATION_TYPES } from '../../constants/NotificationTypes';
+import OrderInfoContent from './OrderInfoContent/OrderInfoContent';
 import styled from 'styled-components';
 require('babel-polyfill');
 
@@ -17,6 +19,19 @@ const GridWrapper = styled.div`
   width: 100%;
   height: calc(100% - 48px);
   margin-top: 64px;
+`;
+
+const BitModalWrapper = styled(BitModal)`
+  width: calc(100vw - 30%);
+  height: calc(100vh - 30%);
+  @media only screen and (max-width: 768px) {
+    width: calc(100vw - 20%);
+    height: calc(100vh - 20%);
+  }
+  @media only screen and (max-width: 48px) {
+    width: 100vw;
+    height: 100vh;
+  }
 `;
 
 const LoadingWrapper = styled.div`
@@ -38,11 +53,16 @@ class Orders extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        showColumnHighLight: [false, false, false],
-        columnsData: [
-          [], [], []
-        ],
-        isLoading: true,
+      showColumnHighLight: [false, false, false],
+      columnsData: [
+        [], [], []
+      ],
+      isLoading: true,
+      openOrderInfo: false,
+      orderInfo: {
+        user: {},
+        data: {}
+      }
     };
     this.API = this.props.API;
     this.cable = null;
@@ -133,8 +153,8 @@ class Orders extends Component {
       showColumnHighLight[columnId] = true; // WARNING: this starts from zero
 
       if(columnId === 3) {
-          showColumnHighLight[columnId] = false;
-          showColumnHighLight[columnId-2] = true;
+        showColumnHighLight[columnId] = false;
+        showColumnHighLight[columnId-2] = true;
       }
 
       console.log('DRAG START >>>>>');
@@ -208,8 +228,30 @@ class Orders extends Component {
       }
   }
 
+  showOrderInfo = (user) => {
+    this.setState({
+      openOrderInfo: true,
+      orderInfo: {
+        user: user,
+        data: {}
+      }
+    }, () => {
+      console.log(user);
+    });
+  }
+
+  handleOrderInfoClose = () => {
+    this.setState({
+      openOrderInfo: false,
+      orderInfo: {
+        user: {},
+        data: {}
+      }
+    });
+  }
+
   render() {
-    const { columnsData, showColumnHighLight, isLoading } = this.state;
+    const { columnsData, showColumnHighLight, isLoading, openOrderInfo, orderInfo } = this.state;
     let newsId = 1;
     let progressId = 2;
     let deliveredId = 3;
@@ -233,33 +275,47 @@ class Orders extends Component {
               <GridWrapper>
                   <Grid container>
                       <Grid item xs={4}>
-                          <OrderList 
-                            title="Incoming"
-                            showHighlight={showColumnHighLight[0]}
-                            droppableId={newsId}
-                            onDragItem={this.handleDrag}
-                            orders={columnsData[newsId-1]} />
+                        <OrderList 
+                          title="Incoming"
+                          showHighlight={showColumnHighLight[0]}
+                          droppableId={newsId}
+                          onDragItem={this.handleDrag}
+                          orders={columnsData[newsId-1]}
+                          showOrderInfo={this.showOrderInfo} />
                       </Grid>
                       <Grid item xs={4}>
-                          <OrderList
-                            title="In Progress"
-                            showHighlight={showColumnHighLight[1]}
-                            droppableId={progressId}
-                            onDragItem={this.handleDrag}
-                            orders={columnsData[progressId-1]} />
+                        <OrderList
+                          title="In Progress"
+                          showHighlight={showColumnHighLight[1]}
+                          droppableId={progressId}
+                          onDragItem={this.handleDrag}
+                          orders={columnsData[progressId-1]}
+                          showOrderInfo={this.showOrderInfo} />
                       </Grid>
                       <Grid item xs={4}>
-                          <OrderList 
-                            title="Delivered"
-                            showHighlight={showColumnHighLight[2]}
-                            droppableId={deliveredId}
-                            onDragItem={this.handleDrag}
-                            orders={columnsData[deliveredId-1]} />   
+                        <OrderList 
+                          title="Delivered"
+                          showHighlight={showColumnHighLight[2]}
+                          droppableId={deliveredId}
+                          onDragItem={this.handleDrag}
+                          orders={columnsData[deliveredId-1]}
+                          showOrderInfo={this.showOrderInfo} />   
                       </Grid>
                   </Grid>
               </GridWrapper>
           </DragDropContext>
-          </ActionCableProvider>
+        </ActionCableProvider>
+        <BitModalWrapper
+          open={openOrderInfo}
+          title="Order title"
+          description="Order info"
+          handleClose={this.handleOrderInfoClose}
+        >
+          <OrderInfoContent
+            handleClose={this.handleOrderInfoClose}
+            orderInfo={orderInfo}
+          />
+        </BitModalWrapper>
       </>
     );
   }
