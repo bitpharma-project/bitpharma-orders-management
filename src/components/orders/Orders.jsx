@@ -109,7 +109,8 @@ class Orders extends Component {
 
           this.API.patch('/order', {
             order_id: itemId,
-            state: newState
+            state: newState,
+            drugstore_id: 2
           }).then(data => {
             this.setState({
               columnsData: columnsData
