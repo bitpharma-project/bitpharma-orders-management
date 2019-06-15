@@ -179,9 +179,9 @@ class Orders extends Component {
     this.setState({
       isLoading: true,
     }, async () => {
-      let news = await this.API.get(`/order/all?status=new?drugstore_id=2`);
-      let progress = await this.API.get(`/order/all?status=progress?drugstore_id=2`);
-      let delivered = await this.API.get(`/order/all?status=delivered?drugstore_id=2`);
+      let news = await this.API.get(`/order/all?status=new&drugstore_id=2`);
+      let progress = await this.API.get(`/order/all?status=progress&drugstore_id=2`);
+      let delivered = await this.API.get(`/order/all?status=delivered&drugstore_id=2`);
 
       columnsData[0] = this.orderWithTotals(news.data);
       columnsData[1] = this.orderWithTotals(progress.data);
