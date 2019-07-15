@@ -207,14 +207,25 @@ class Login extends React.Component {
       if (!!data) {
         const tokenReceived = this.getToken(data.headers['authorization']);
         cookies.set('token', tokenReceived, { path: '/' });
-        this.setState({
-          isLoading: false,
-          hasErrors: false,
-          errors: [],
-          isLoggedIn: true
-        }, () => {
-          this.props.handleLogin(true);
-        });
+        if (data.data.drug_stores.length > 0) {
+          this.setState({
+            isLoading: false,
+            hasErrors: false,
+            errors: [],
+            isLoggedIn: true
+          }, () => {
+            this.props.handleLogin(true);
+          });
+        } else {
+          this.setState({
+            isLoading: false,
+            hasErrors: true,
+            errors: ['You don\'t have any associated drug stores.'],
+            isLoggedIn: false
+          }, () => {
+            this.props.handleLogin(false);
+          });
+        }
       }
     }).catch( (err) => {
       console.log(err);

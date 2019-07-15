@@ -29,6 +29,7 @@ class App extends Component {
         photoUrl: '',
         email: '',
         role: '',
+        drugStore: {},
       }
     }
 
@@ -50,32 +51,13 @@ class App extends Component {
     });
   };
 
-  // addNotification = (title, message, duration, type) => {
-  //   let obj = this.notificationDOMRef_info;
-  //   if (type === NOTIFICATION_TYPES.SUCCESS)
-  //     obj = this.notificationDOMRef_sucess;
-  //   else if (type === NOTIFICATION_TYPES.ERROR)
-  //     obj = this.notificationDOMRef_error;
-
-  //   obj.current.addNotification({
-  //     title: title,
-  //     message: message,
-  //     type: type,
-  //     insert: "top",
-  //     container: "top-right",
-  //     animationIn: ["animated", "fadeIn"],
-  //     animationOut: ["animated", "fadeOut"],
-  //     dismiss: { duration: duration },
-  //     dismissable: { click: true }
-  //   });
-  // };
-
   componentWillMount() {
     // Get user access token
     const accessToken = this.props.cookies.get('token', { path: '/' });
     if (!!accessToken) {
       this.setState({access_token: accessToken, isLoggedIn: true}, () => {
         this.configureAxios();
+        this.getCurrentUserData();
       });
     }
   }
@@ -108,7 +90,7 @@ class App extends Component {
   getCurrentUserData = () => {
     this.API.get(`${ApiServer}/user`).then(data => {
       const response = data.data;
-      console.log(data.data);
+      console.log('Logged in::', data.data);
       this.setState({
         user: {
           fullName: response.complete_name,

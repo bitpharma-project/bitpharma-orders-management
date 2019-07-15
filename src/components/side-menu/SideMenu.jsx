@@ -52,9 +52,6 @@ class SideMenu extends React.Component {
         <ListItem button onClick={() => this.goTo('/orders')}>
           <ListItemText primary="Orders" />
         </ListItem>
-        <ListItem button onClick={() => this.goTo('/support')}>
-          <ListItemText primary="Help & support" />
-        </ListItem>
         <Divider />
         <List>
           <ListItem button onClick={this.props.handleLogut}>

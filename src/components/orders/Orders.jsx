@@ -13,6 +13,9 @@ import { WSConnection } from '../../settings';
 import { NOTIFICATION_TYPES } from '../../constants/NotificationTypes';
 import OrderInfoContent from './OrderInfoContent/OrderInfoContent';
 import styled from 'styled-components';
+import axios from 'axios';
+import { ApiServer } from '../../settings';
+
 require('babel-polyfill');
 
 const GridWrapper = styled.div`
@@ -59,6 +62,7 @@ class Orders extends Component {
       ],
       isLoading: true,
       openOrderInfo: false,
+      drug_store_id: -1,
       orderInfo: {
         user: {},
         data: {}
@@ -110,7 +114,7 @@ class Orders extends Component {
           this.API.patch('/order', {
             order_id: itemId,
             state: newState,
-            drugstore_id: 2
+            drugstore_id: this.state.user.drugStore.id
           }).then(data => {
             this.setState({
               columnsData: columnsData
@@ -144,7 +148,6 @@ class Orders extends Component {
       this.setState({
           showColumnHighLight: showColumnHighLight
       });
-
   }
 
   handleDragStart = (event) => {
@@ -170,8 +173,27 @@ class Orders extends Component {
     this.cable = ActionCable.createConsumer(`${WSConnection}/cable`);
   }
 
+  getCurrentUserData = () => {
+    this.API.get(`${ApiServer}/user`).then(data => {
+      const response = data.data;
+      console.log('Logged in::', data.data);
+      this.setState({
+        user: {
+          fullName: response.complete_name,
+          email: response.email,
+          photoUrl: response.profile_picture_url,
+          role: 'Product Manager',
+          drugStore: response.drug_stores[0],
+        },
+      }, () => {
+        this.getColumnsData();
+      })
+    });
+  }
+
   componentDidMount = () => {
-    this.getColumnsData();
+    console.log(this.props.user);
+    this.getCurrentUserData();
   }
 
   getColumnsData() {
@@ -180,9 +202,10 @@ class Orders extends Component {
     this.setState({
       isLoading: true,
     }, async () => {
-      let news = await this.API.get(`/order/all?status=new&drugstore_id=2`);
-      let progress = await this.API.get(`/order/all?status=progress&drugstore_id=2`);
-      let delivered = await this.API.get(`/order/all?status=delivered&drugstore_id=2`);
+      const { id } = this.state.user.drugStore;
+      let news = await this.API.get(`/order/all?status=new&drugstore_id=${id}`);
+      let progress = await this.API.get(`/order/all?status=progress&drugstore_id=${id}`);
+      let delivered = await this.API.get(`/order/all?status=delivered&drugstore_id=${id}`);
 
       columnsData[0] = this.orderWithTotals(news.data);
       columnsData[1] = this.orderWithTotals(progress.data);
@@ -198,6 +221,7 @@ class Orders extends Component {
   }
 
   orderWithTotals = (orders) => {
+    console.log('OrDers >>>>', orders);
     let result = orders.map((order) => {
       let total = 0;
       for(let i = 0; i < order.products.length; i++) {
